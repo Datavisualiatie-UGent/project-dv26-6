@@ -1,6 +1,4 @@
-import * as d3 from "d3";
-
-function normalizeRow(row) {
+export function normalizeRow(row) {
   return {
     ...row,
     date_published: row.date_published ? new Date(row.date_published) : null,
@@ -15,17 +13,5 @@ function normalizeRow(row) {
     cook_time: row.cook_time ?? null,
     total_time: row.total_time ?? null,
     servings: row.servings ?? null
-  };
-}
-
-export async function loadRecipes() {
-  const [allRecipesRaw, cuisinesRaw] = await Promise.all([
-    d3.csv("data/all_recipes.csv", d3.autoType),
-    d3.csv("data/cuisines.csv", d3.autoType)
-  ]);
-
-  return {
-    all_recipes: allRecipesRaw.map(normalizeRow),
-    cuisines: cuisinesRaw.map(normalizeRow)
   };
 }
