@@ -22,3 +22,5 @@ const cuisines = cuisinesRaw.map(normalizeRow);
 ```js
 display(MyPlot(all_recipes));
 ```
+
+## Tweede plot, wereldkaart
