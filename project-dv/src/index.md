@@ -24,3 +24,19 @@ display(MyPlot(all_recipes));
 ```
 
 ## Tweede plot, wereldkaart
+
+Deze kaart toont welke landen en keukens er vertegenwoordigd zijn in de dataset
+
+```js
+import { FileAttachment } from "observablehq:stdlib";
+import { normalizeRow } from "./loadData.js";
+import { WorldMap } from "./components/WorldMap.js";
+
+```
+
+```js
+display(await WorldMap(cuisines));
+```
+
+
+**Groen** = Minstens 1 keuken in de dataset · **Gray** = Geen keuken

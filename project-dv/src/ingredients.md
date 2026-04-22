@@ -18,7 +18,7 @@ De AllRecipes-dataset bevat **${ingredients.length.toLocaleString("nl")} unieke 
 
 ## De meest gebruikte ingrediënten
 
-Niet verrassend: **zout** staat bovenaan. Daarna volgen suiker, bloem en boter — de pijlers van westerse thuiskeuken. Gebruik de slider om meer of minder ingrediënten te tonen.
+Niet verrassend: **zout** staat bovenaan. Daarna volgen suiker, bloem en boter, de pijlers van westerse thuiskeuken. Gebruik de slider om meer of minder ingrediënten te tonen.
 
 ```js
 const n = view(Inputs.range([10, 50], { step: 5, value: 20, label: "Aantal ingrediënten" }));
