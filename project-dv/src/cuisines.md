@@ -47,7 +47,8 @@ display(Plot.plot({
       sort: { y: "-x" },
       fill: "#ff0000",
       tip: true,
-      title: d => `${d.name}\n Beoordeling: ${d.avg_rating.toFixed(2)}`
+      title: d => `${d.name}
+Beoordeling: ${d.avg_rating.toFixed(2)}`
     }),
     Plot.ruleX([0])
   ]
@@ -97,5 +98,139 @@ display(Plot.plot({
 ## Hoe verschillen de keukens in populariteit?
 
 Een anders aspect waarin de keukens kunnnen verschillen is de populariteit. Populariteit kan met onze dataset op twee manieren gemeten worden. Ten eerste kunnen we de gemiddelde beoordeling van de recepten van een keuken bekijken. Ten tweede kunnen we kijken naar het aantal beoordelingen dat de recepten van een keuken hebben. We zullen deze twee manieren om populariteit te meten weergeven in eenzelfde figuur.
+
+De onderstaande figuur toont het gemiddelde aantal beoordelingen van een recept per keuken ten opzichte van de gemiddelde gemiddelde beoordeling van een recept per keuken.
+
+```js
+const cuisineStats = Object.values(
+  cuisines.reduce((acc, d) => {
+    if (!acc[d.country]) {
+      acc[d.country] = {
+        country: d.country,
+        sumRating: 0,
+        sumRatingsCount: 0,
+        count: 0
+      };
+    }
+
+    if (!isNaN(d.avg_rating) && !isNaN(d.total_ratings)) {
+      acc[d.country].sumRating += d.avg_rating;
+      acc[d.country].sumRatingsCount += d.total_ratings;
+      acc[d.country].count += 1;
+    }
+
+    return acc;
+  }, {})
+).map(d => ({
+  country: d.country,
+  avg_rating: d.sumRating / d.count,
+  avg_total_ratings: d.sumRatingsCount / d.count,
+  count: d.count
+}));
+```
+
+```js
+display(Plot.plot({
+  title: "Populariteit van de keukens",
+  width,
+  height: 600,
+
+  x: { label: "Gemiddeld aantal beoordelingen", domain: [0, 200] },
+  y: { label: "Gemiddelde gemiddelde beoordeling", domain: [4, 5] },
+
+  marks: [
+    Plot.dot(cuisineStats, {
+      x: "avg_total_ratings",
+      y: "avg_rating",
+      r: 4,
+      fill: "#ff0000",
+      stroke: "#ff0000",
+      tip: true,
+      title: d =>
+        `${d.country}
+Gemiddelde beoordeling: ${d.avg_rating.toFixed(2)}
+Aantal beoordelingen: ${Math.round(d.avg_total_ratings)}`
+    }),
+
+    Plot.text(cuisineStats, {
+      x: "avg_total_ratings",
+      y: "avg_rating",
+      text: "country",
+      dy: -8,
+      fontSize: 10
+    })
+  ]
+}));
+```
+
+## Hoe verschillen de keukens in de duur van het maken van de recepten?
+
+Een derde manier waarop we de keukens kunnen vergelijken is hoelang het duurt om een recept te maken. Hiervoor zijn er drie variabelen beschikbaar in de dataset. Ten eerste is er de voorbereidingstijd van de recepten. Ten tweede is er de kooktijd van de recepten. Ten slotte, is er nog de totale tijd, de som van de twee voorgaande. We zullen de voorbereidingstijd en de kooktijd gebruiken om de keukens te vergelijken.
+
+In de onderstaande figuur wordt de gemiddelde voorbereidingstijd van een recept per keuken ten opzichte van de gemiddelde kooktijd van een recept per keuken weergegeven.
+
+```js
+const cuisineStats2 = Object.values(
+  cuisines.reduce((acc, d) => {
+    if (!acc[d.country]) {
+      acc[d.country] = {
+        country: d.country,
+        sumPrep: 0,
+        sumCook: 0,
+        count: 0
+      };
+    }
+
+    if (!isNaN(d.prep_time) && !isNaN(d.cook_time)) {
+      acc[d.country].sumPrep += d.prep_time;
+      acc[d.country].sumCook += d.cook_time;
+      acc[d.country].count += 1;
+    }
+
+    return acc;
+  }, {})
+).map(d => ({
+  country: d.country,
+  avg_prep_time: d.sumPrep / d.count,
+  avg_cook_time: d.sumCook / d.count,
+  count: d.count
+}));
+```
+
+```js
+display(Plot.plot({
+  title: "Voorbereidingstijd en kooktijd van de keukens",
+  width,
+  height: 600,
+
+  x: { label: "Gemiddelde voorbereidingstijd in minuten", domain: [0, 90] },
+  y: { label: "Gemiddelde kooktijd in minuten", domain: [0, 90] },
+
+  marks: [
+    Plot.dot(cuisineStats2, {
+      x: "avg_prep_time",
+      y: "avg_cook_time",
+      r: 4,
+      fill: "#ff0000",
+      stroke: "#ff0000",
+      tip: true,
+      title: d =>
+        `${d.country}
+Voorbereidingstijd: ${Math.round(d.avg_prep_time)} min
+Kooktijd: ${Math.round(d.avg_cook_time)} min`
+    }),
+
+    Plot.text(cuisineStats2, {
+      x: "avg_prep_time",
+      y: "avg_cook_time",
+      text: "country",
+      dy: -8,
+      fontSize: 10
+    })
+  ]
+}));
+```
+
+## Hoe verschillen de keukens in de voedingswaarden van hun recepten?
 
 
