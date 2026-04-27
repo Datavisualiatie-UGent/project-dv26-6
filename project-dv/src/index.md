@@ -9,18 +9,17 @@ Deze pagina toont een eerste visualisatie van de TidyTuesday AllRecipes‑datase
 ## Plot laden
 
 ```js
-import { FileAttachment } from "observablehq:stdlib";
-import { normalizeRow } from "./loadData.js";
-import { MyPlot } from "./components/MyPlot.js";
 
 const allRecipesRaw = await FileAttachment("data/all_recipes.csv").csv({ typed: true });
 const cuisinesRaw = await FileAttachment("data/cuisines.csv").csv({ typed: true });
 
 const all_recipes = allRecipesRaw.map(normalizeRow);
 const cuisines = cuisinesRaw.map(normalizeRow);
+
+import { Wordcloud } from "./components/Wordcloud.js"
 ```
 ```js
-display(MyPlot(all_recipes));
+display(await Wordcloud(cuisines));
 ```
 
 ## Tweede plot, wereldkaart
