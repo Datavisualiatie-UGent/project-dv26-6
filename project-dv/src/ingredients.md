@@ -76,14 +76,6 @@ display(Plot.plot({
       tip: true,
       title: d => `${d.ingredient}\n${d.count} recepten\nGem. ${d.avg_calories} kcal\nRating: ${(+d.avg_rating).toFixed(2)}`
     }),
-    Plot.text(scatterData.filter(d => d.count >= 800), {
-      x: "avg_calories",
-      y: "avg_rating",
-      text: "ingredient",
-      dy: -10,
-      fontSize: 10,
-      fill: "#333"
-    })
   ]
 }));
 ```
