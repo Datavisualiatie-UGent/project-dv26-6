@@ -233,4 +233,36 @@ Kooktijd: ${Math.round(d.avg_cook_time)} min`
 
 ## Hoe verschillen de keukens in de voedingswaarden van hun recepten?
 
+De laatste manier waarop we de keukens kunnen vergelijken zijn de voedingswaarden van hun recepten. Hiertoe hebben we voor al de recepten het aantal kilocalorieën, vetten, koolhydraten en proteïnen beschikbaar. We zullen deze allemaal gebruiken, waarbij de gebruiker de keuze heeft welke gebruikt worden.
 
+De onderstaande figuur toont ...
+
+```js
+const cuisineStats3 = Object.values(
+  cuisines.reduce((acc, d) => {
+    if (!acc[d.country]) {
+      acc[d.country] = {
+        country: d.country,
+        sumPrep: 0,
+        sumCook: 0,
+        count: 0
+      };
+    }
+
+    if (!isNaN(d.prep_time) && !isNaN(d.cook_time)) {
+      acc[d.country].sumPrep += d.prep_time;
+      acc[d.country].sumCook += d.cook_time;
+      acc[d.country].count += 1;
+    }
+
+    return acc;
+  }, {})
+).map(d => ({
+  country: d.country,
+  avg_prep_time: d.sumPrep / d.count,
+  avg_cook_time: d.sumCook / d.count,
+  count: d.count
+}));
+```
+
+De onderstaande figuur toont ... (spiderplot met gekozen)
