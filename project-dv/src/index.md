@@ -25,7 +25,7 @@ display(MyPlot(all_recipes));
 
 ## Tweede plot, wereldkaart
 
-Deze kaart toont welke landen en keukens er vertegenwoordigd zijn in de dataset
+Belangrijk om te weten bij deze dataset is welk deel van de wereld het vertegenwoordigt, zoals veel datasets ontbreken bepaalde regio's waaronder vooral het continent Afrika. Deze kaart toont welke landen en keukens er vertegenwoordigd zijn in de dataset
 
 ```js
 import { FileAttachment } from "observablehq:stdlib";
@@ -39,4 +39,4 @@ display(await WorldMap(cuisines));
 ```
 
 
-**Groen** = Minstens 1 keuken in de dataset · **Gray** = Geen keuken
+**Groen** = Minstens 1 keuken in de dataset, **Grijs** = Geen keuken

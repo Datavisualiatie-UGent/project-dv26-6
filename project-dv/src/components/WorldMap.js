@@ -4,7 +4,6 @@ import * as topojson from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
 export function WorldMap(cuisines) {
   return (async () => {
 
-
   const cuisineMap = {
     "Greek": ["GRC"], "Jewish": ["ISR"], "Australian and New Zealander": ["AUS","NZL"],
     "Chilean": ["CHL"], "Tex-Mex": ["USA","MEX"], "Canadian": ["CAN"],
@@ -24,7 +23,16 @@ export function WorldMap(cuisines) {
     "Austrian": ["AUT"], "Belgian": ["BEL"], "Pakistani": ["PAK"], "Swiss": ["CHE"]
   };
 
-  const coveredISO = new Set(Object.values(cuisineMap).flat());
+  // Count cuisines per ISO code
+  const cuisineCount = {};
+  for (const [cuisine, isos] of Object.entries(cuisineMap)) {
+    for (const iso of isos) {
+      cuisineCount[iso] = (cuisineCount[iso] || 0) + 1;
+    }
+  }
+
+  const coveredISO = new Set(Object.keys(cuisineCount));
+
   const countryToCuisines = {};
   for (const [cuisine, isos] of Object.entries(cuisineMap)) {
     for (const iso of isos) {
@@ -32,6 +40,19 @@ export function WorldMap(cuisines) {
       countryToCuisines[iso].push(cuisine);
     }
   }
+
+  const maxCount = Math.max(...Object.values(cuisineCount));
+
+
+const colorScale = d3.scalePow()
+  .exponent(0.4)
+  .domain([1, maxCount])
+  .range(["#1D9E75", "#074e42"]);
+
+const hoverColorScale = d3.scalePow()
+  .exponent(0.4)
+  .domain([1, maxCount])
+  .range(["#166c51", "#05332b"]);
 
   const isoMap = {
     "004":"AFG","008":"ALB","012":"DZA","024":"AGO","032":"ARG","036":"AUS","040":"AUT",
@@ -61,6 +82,9 @@ export function WorldMap(cuisines) {
     .style("width", "100%")
     .style("height", "auto");
 
+  svg.on("mouseleave", () => tooltip.style("display", "none"));
+
+
   const tooltip = d3.select("body").append("div")
     .style("position", "absolute")
     .style("background", "white")
@@ -78,25 +102,59 @@ export function WorldMap(cuisines) {
     .attr("d", pathGen)
     .attr("fill", d => {
       const iso = isoMap[String(d.id).padStart(3, "0")];
-      return iso && coveredISO.has(iso) ? "#1D9E75" : "#D3D1C7";
+      if (!iso || !coveredISO.has(iso)) return "#D3D1C7";
+      return colorScale(cuisineCount[iso]);
     })
     .attr("stroke", "#fff")
     .attr("stroke-width", 0.4)
     .on("mouseover", function(event, d) {
       const iso = isoMap[String(d.id).padStart(3, "0")];
       if (iso && coveredISO.has(iso)) {
-        tooltip.style("display", "block").text(countryToCuisines[iso].join(", "));
-        d3.select(this).attr("fill", "#0F6E56");
+        const count = cuisineCount[iso];
+        tooltip.style("display", "block")
+          .html(`<strong>${countryToCuisines[iso].join(", ")}</strong><br/><span style="color:#888">${count} keuken${count > 1 ? 's' : ''}</span>`);
+        d3.select(this).attr("fill", hoverColorScale(count));
       }
     })
     .on("mousemove", event => {
       tooltip.style("left", (event.pageX + 12) + "px").style("top", (event.pageY - 8) + "px");
     })
+
     .on("mouseout", function(event, d) {
-      const iso = isoMap[String(d.id).padStart(3, "0")];
-      d3.select(this).attr("fill", iso && coveredISO.has(iso) ? "#1D9E75" : "#D3D1C7");
-      tooltip.style("display", "none");
-    });
+  const iso = isoMap[String(d.id).padStart(3, "0")];
+  tooltip.style("display", "none");
+  if (iso && coveredISO.has(iso)) {
+    d3.select(this).attr("fill", colorScale(cuisineCount[iso]));
+  } else {
+    d3.select(this).attr("fill", "#D3D1C7");
+  }
+});
+
+  // Legend
+  const legendWidth = 160, legendHeight = 12;
+  const legendX = 40, legendY = height - 50;
+
+  const defs = svg.append("defs");
+  const grad = defs.append("linearGradient").attr("id", "legend-grad");
+  grad.append("stop").attr("offset", "0%").attr("stop-color", "#1D9E75");
+  grad.append("stop").attr("offset", "100%").attr("stop-color", "#074e42");
+
+  svg.append("rect")
+    .attr("x", legendX).attr("y", legendY)
+    .attr("width", legendWidth).attr("height", legendHeight)
+    .attr("rx", 3)
+    .attr("fill", "url(#legend-grad)");
+
+  svg.append("text")
+    .attr("x", legendX).attr("y", legendY - 6)
+    .attr("font-size", "11px").attr("fill", "#555")
+    .text("1 keuken");
+
+  svg.append("text")
+    .attr("x", legendX + legendWidth).attr("y", legendY - 6)
+    .attr("font-size", "11px").attr("fill", "#555")
+    .attr("text-anchor", "end")
+    .text(`${maxCount} keukens`);
 
   return svg.node();
   })();
