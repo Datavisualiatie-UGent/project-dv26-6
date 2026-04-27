@@ -233,7 +233,7 @@ Kooktijd: ${Math.round(d.avg_cook_time)} min`
 
 ## Hoe verschillen de keukens in de voedingswaarden van hun recepten?
 
-De laatste manier waarop we de keukens kunnen vergelijken zijn de voedingswaarden van hun recepten. Hiertoe hebben we voor al de recepten het aantal kilocalorieën, vetten, koolhydraten en proteïnen beschikbaar. We zullen deze allemaal gebruiken, waarbij de gebruiker de keuze heeft welke gebruikt worden.
+De laatste manier waarop we de keukens kunnen vergelijken zijn de voedingswaarden van hun recepten. Hiertoe hebben we voor al de recepten het aantal kilocalorieën, vetten, koolhydraten en proteïnen beschikbaar. We zullen deze allemaal gebruiken, waarbij de gebruiker de keuze heeft welke keukens er getoond worden.
 
 De onderstaande figuur toont ...
 
@@ -243,15 +243,19 @@ const cuisineStats3 = Object.values(
     if (!acc[d.country]) {
       acc[d.country] = {
         country: d.country,
-        sumPrep: 0,
-        sumCook: 0,
+        sumCal: 0,
+        sumFat: 0,
+        sumCar: 0,
+        sumPro: 0,
         count: 0
       };
     }
 
-    if (!isNaN(d.prep_time) && !isNaN(d.cook_time)) {
-      acc[d.country].sumPrep += d.prep_time;
-      acc[d.country].sumCook += d.cook_time;
+    if (!isNaN(d.calories) && !isNaN(d.fat) && !isNaN(d.carbs) && !isNaN(d.protein)) {
+      acc[d.country].sumCal += d.calories;
+      acc[d.country].sumFat += d.fat;
+      acc[d.country].sumCar += d.carbs;
+      acc[d.country].sumPro += d.protein;
       acc[d.country].count += 1;
     }
 
@@ -259,10 +263,14 @@ const cuisineStats3 = Object.values(
   }, {})
 ).map(d => ({
   country: d.country,
-  avg_prep_time: d.sumPrep / d.count,
-  avg_cook_time: d.sumCook / d.count,
+  avg_cal: d.sumCal / d.count,
+  avg_fat: d.sumFat / d.count,
+  avg_car: d.sumCar / d.count,
+  avg_pro: d.sumPro / d.count,
   count: d.count
 }));
 ```
 
-De onderstaande figuur toont ... (spiderplot met gekozen)
+```js
+
+```
