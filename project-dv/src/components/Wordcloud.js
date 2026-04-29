@@ -39,7 +39,7 @@ export function Wordcloud(cuisines) {
     // 3. Color scale
     const colorScale = d3.scaleSequential()
       .domain([1, Math.max(...Object.values(counts))])
-      .range(["#1D9E75", "#074e42"]);
+      .range(["#d8bcab", "#562c2c"]);
 
     // 4. Run the layout
     await new Promise((resolve) => {

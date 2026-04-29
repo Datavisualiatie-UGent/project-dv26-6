@@ -2,40 +2,10 @@
 title: Recepten Visualisatie
 ---
 
-# Recepten Dashboard
+In this visualisation we will be looking at a large dataset of recipes stemming from the popular website "AllRecipes".
+The saying "You are what you eat" says it all: you can find out a lot about somebody about their eating habits, or more specifically, their cooking habits. This website gives the viewer the chance to look at how people cook throughout different cultures: what ingrediënts do they use, which nutrients are prominent, how much time do we spend in the kitchen and much more!
 
-Deze pagina toont een eerste visualisatie van de TidyTuesday AllRecipes‑dataset.
+The first page allows you to explore the dataset in a more general sense, showing you what we mean by cuisines and which ones are represented.
+The cuisines page will help you compare different cultures and their values when it comes to food.
+The final page takes a deeper look into the ingredient data.
 
-## Plot laden
-
-```js
-
-const allRecipesRaw = await FileAttachment("data/all_recipes.csv").csv({ typed: true });
-const cuisinesRaw = await FileAttachment("data/cuisines.csv").csv({ typed: true });
-
-const all_recipes = allRecipesRaw.map(normalizeRow);
-const cuisines = cuisinesRaw.map(normalizeRow);
-
-import { Wordcloud } from "./components/Wordcloud.js"
-```
-```js
-display(await Wordcloud(cuisines));
-```
-
-## Tweede plot, wereldkaart
-
-Belangrijk om te weten bij deze dataset is welk deel van de wereld het vertegenwoordigt, zoals veel datasets ontbreken bepaalde regio's waaronder vooral het continent Afrika. Deze kaart toont welke landen en keukens er vertegenwoordigd zijn in de dataset
-
-```js
-import { FileAttachment } from "observablehq:stdlib";
-import { normalizeRow } from "./loadData.js";
-import { WorldMap } from "./components/WorldMap.js";
-
-```
-
-```js
-display(await WorldMap(cuisines));
-```
-
-
-**Groen** = Minstens 1 keuken in de dataset, **Grijs** = Geen keuken
