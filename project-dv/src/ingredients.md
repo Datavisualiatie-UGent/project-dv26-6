@@ -1,27 +1,29 @@
 ---
-title: Ingrediënten
+title: Ingredients
 ---
 
 ```js
 import * as Plot from "@observablehq/plot";
+import * as d3 from "npm:d3";
 
-const ingredients      = await FileAttachment("data/ingredients.csv").csv({ typed: true });
-const ingredientStats  = await FileAttachment("data/ingredient_stats.csv").csv({ typed: true });
-const cuisineData      = await FileAttachment("data/cuisine_ingredients.csv").csv({ typed: true });
+const ingredients     = await FileAttachment("data/ingredients.csv").csv({ typed: true });
+const ingredientStats = await FileAttachment("data/ingredient_stats.csv").csv({ typed: true });
+const cuisineData     = await FileAttachment("data/cuisine_ingredients.csv").csv({ typed: true });
+const allRecipes      = await FileAttachment("data/all_recipes.csv").csv({ typed: true });
 ```
 
-# Wat zit er in ons eten?
+# What's in our food?
 
-De AllRecipes-dataset bevat **${ingredients.length.toLocaleString("nl")} unieke ingrediënten** verspreid over meer dan 14.000 recepten. Van alledaagse basisproducten zoals zout en bloem tot de meest exotische smaakmakers — op deze pagina verkennen we welke ingrediënten onze keuken domineren, wat ze vertellen over calorieën en waardering, en hoe keukens wereldwijd van elkaar verschillen.
+The AllRecipes dataset contains **${ingredients.length.toLocaleString("en")} unique ingredients** spread across more than 14,000 recipes. From everyday staples like salt and flour to the most exotic flavourings — this page explores which ingredients dominate our kitchens, what they reveal about recipe quality and nutrition, and how cuisines around the world differ from one another.
 
 ---
 
-## De meest gebruikte ingrediënten
+## The most common ingredients
 
-Niet verrassend: **zout** staat bovenaan. Daarna volgen suiker, bloem en boter, de pijlers van westerse thuiskeuken. Gebruik de slider om meer of minder ingrediënten te tonen.
+Every cuisine has its building blocks. Salt leads by a wide margin, appearing in over a third of all recipes. Sugar, flour and butter follow — the cornerstones of Western home cooking. Use the slider to expand or narrow the list.
 
 ```js
-const n = view(Inputs.range([10, 50], { step: 5, value: 20, label: "Aantal ingrediënten" }));
+const n = view(Inputs.range([10, 50], { step: 5, value: 20, label: "Number of ingredients" }));
 ```
 
 ```js
@@ -29,7 +31,7 @@ display(Plot.plot({
   marginLeft: 180,
   width,
   height: n * 22 + 60,
-  x: { label: "Aantal recepten" },
+  x: { label: "Number of recipes" },
   y: { label: null },
   marks: [
     Plot.barX(ingredients.slice(0, n), {
@@ -46,47 +48,13 @@ display(Plot.plot({
 
 ---
 
-## Calorieën en waardering
+## Which ingredients make a recipe great?
 
-Zitten ingrediënten uit calorierijke recepten ook in beter gewaardeerde recepten? Elk punt is een ingrediënt — hoe **groter de cirkel**, hoe vaker het voorkomt in de dataset. Hover over een punt voor details.
+Not all ingredients are equal when it comes to user ratings. The chart below takes the **30 most popular ingredients** and shows how the average rating of recipes containing that ingredient compares to the overall dataset average. Ingredients associated with above-average recipes are shown in green; those linked to below-average recipes in red.
 
-```js
-const scatterData = ingredientStats.filter(d =>
-  d.count >= 100 &&
-  d.avg_calories > 0 && !isNaN(d.avg_calories) &&
-  d.avg_rating   > 0 && !isNaN(d.avg_rating)
-);
+Note that this is a correlation, not causation — a recipe rated highly because of its technique might simply happen to contain garlic.
 
-display(Plot.plot({
-  width,
-  height: 500,
-  marginRight: 20,
-  r: { range: [3, 24] },
-  x: { label: "Gemiddeld calorieën van recepten met dit ingrediënt (kcal)" },
-  y: { label: "Gemiddelde rating" },
-  marks: [
-    Plot.dot(scatterData, {
-      x: "avg_calories",
-      y: "avg_rating",
-      r: "count",
-      fill: "steelblue",
-      fillOpacity: 0.45,
-      stroke: "steelblue",
-      strokeOpacity: 0.7,
-      tip: true,
-      title: d => `${d.ingredient}\n${d.count} recepten\nGem. ${d.avg_calories} kcal\nRating: ${(+d.avg_rating).toFixed(2)}`
-    }),
-  ]
-}));
-```
-
----
-
-## Wat maakt een recept goed?
-
-Onder de **30 populairste ingrediënten**, welke zijn geassocieerd met hogere of lagere gemiddelde ratings? We vergelijken de gemiddelde rating van recepten mét dat ingrediënt met het globale gemiddelde over alle recepten.
-
-<span style="color: #2ecc71">■</span> **Groen** = boven gemiddeld gewaardeerd &nbsp;&nbsp; <span style="color: #e74c3c">■</span> **Rood** = onder gemiddeld gewaardeerd
+<span style="color: #2ecc71">■</span> **Green** = above average rating &nbsp;&nbsp; <span style="color: #e74c3c">■</span> **Red** = below average rating
 
 ```js
 const top30 = ingredientStats
@@ -99,10 +67,10 @@ display(Plot.plot({
   width,
   height: top30.length * 22 + 60,
   x: {
-    label: "Afwijking van gemiddelde rating",
+    label: "Deviation from average rating",
     tickFormat: d => (d > 0 ? "+" : "") + d.toFixed(2)
   },
-  y: { label: null },
+  y: { label: null, domain: top30.map(d => d.ingredient) },
   marks: [
     Plot.barX(top30, {
       x: "rating_deviation",
@@ -111,9 +79,9 @@ display(Plot.plot({
       tip: true,
       title: d =>
         `${d.ingredient}\n` +
-        `Afwijking: ${+d.rating_deviation > 0 ? "+" : ""}${(+d.rating_deviation).toFixed(3)}\n` +
-        `Gem. rating: ${(+d.avg_rating).toFixed(2)}\n` +
-        `${d.count} recepten`
+        `Deviation: ${+d.rating_deviation > 0 ? "+" : ""}${(+d.rating_deviation).toFixed(3)}\n` +
+        `Avg. rating: ${(+d.avg_rating).toFixed(2)}\n` +
+        `${d.count} recipes`
     }),
     Plot.ruleX([0])
   ]
@@ -122,30 +90,130 @@ display(Plot.plot({
 
 ---
 
-## Verken en vergelijk zelf
+## Do indulgent recipes taste better?
 
-Zoek een ingrediënt en vink het aan. Geselecteerde ingrediënten verschijnen als chips — klik op **×** om ze te verwijderen. Je selectie blijft bewaard terwijl je verder zoekt.
+A recurring question in food culture: do richer, more caloric recipes actually get better reviews? The chart below compares the calorie distribution of **highly-rated recipes** (≥ 4.5 ★) against **lower-rated recipes** (< 4.5 ★). Each curve is normalised so that both groups are directly comparable regardless of size. The dashed vertical lines mark the mean calorie count for each group.
+
+Only recipes with at least **${minRatings} ratings** are included to ensure reliable scores — adjust the threshold with the slider.
 
 ```js
-// Zelfstandige component met pure DOM-API's — geen html-tag, geen sanitisatie-problemen.
+const minRatings = view(Inputs.range([5, 50], { step: 5, value: 10, label: "Minimum number of ratings" }));
+```
+
+```js
+const histData = allRecipes.filter(d =>
+  d.calories > 0 && !isNaN(d.calories) &&
+  d.avg_rating > 0 && !isNaN(d.avg_rating) &&
+  d.total_ratings >= minRatings &&
+  d.calories <= 1500
+);
+
+const binGen = d3.bin().domain([0, 1500]).thresholds(40);
+const groups = [
+  { label: "Highly rated (≥ 4.5 ★)", filter: d => d.avg_rating >= 4.5 },
+  { label: "Lower rated (< 4.5 ★)",  filter: d => d.avg_rating < 4.5  }
+];
+
+const lineData = groups.flatMap(({ label, filter }) => {
+  const values = histData.filter(filter).map(d => d.calories);
+  return binGen(values).map(b => ({
+    x: (b.x0 + b.x1) / 2,
+    y: b.length / values.length,
+    group: label
+  }));
+});
+
+const meanData = groups.map(({ label, filter }) => {
+  const values = histData.filter(filter).map(d => d.calories);
+  return { x: d3.mean(values), group: label };
+});
+
+display(Plot.plot({
+  width,
+  height: 400,
+  marginRight: 20,
+  x: { label: "Calories (kcal)" },
+  y: { label: "Relative frequency" },
+  color: { legend: true },
+  marks: [
+    Plot.lineY(lineData, {
+      x: "x",
+      y: "y",
+      stroke: "group",
+      strokeWidth: 2.5
+    }),
+    Plot.ruleX(meanData, {
+      x: "x",
+      stroke: "group",
+      strokeWidth: 1.5,
+      strokeDasharray: "6,4"
+    }),
+    Plot.ruleY([0])
+  ]
+}));
+```
+
+---
+
+## The world on your plate
+
+Different cuisines have signature ingredients that define their identity. Rather than simply listing the most frequently used ingredients per country, we compute a **specificity score** — how much more often an ingredient appears in a given cuisine compared to its global frequency in the full dataset. A high score means the ingredient is a true hallmark of that cuisine.
+
+Select a cuisine from the dropdown to explore its most distinctive ingredients.
+
+```js
+const countries = [...new Set(cuisineData.map(d => d.country))].sort();
+const selectedCountry = view(Inputs.select(countries, { label: "Cuisine" }));
+```
+
+```js
+const countryData = cuisineData
+  .filter(d => d.country === selectedCountry)
+  .sort((a, b) => b.specificity - a.specificity);
+const countryTotal = countryData[0]?.total_recipes ?? 0;
+
+display(Plot.plot({
+  title: `${selectedCountry} cuisine — ${countryTotal} recipes`,
+  marginLeft: 210,
+  width,
+  height: countryData.length * 30 + 60,
+  x: { label: "Specificity score (how unique compared to other cuisines)" },
+  y: { label: null },
+  marks: [
+    Plot.barX(countryData, {
+      x: "specificity",
+      y: "ingredient",
+      sort: { y: "-x" },
+      fill: "#e67e22",
+      tip: true,
+      title: d => `${d.ingredient}\n${d.count} of ${d.total_recipes} recipes`
+    }),
+    Plot.ruleX([0])
+  ]
+}));
+```
+
+---
+
+## Explore and compare
+
+Want to look up a specific ingredient or compare several side by side? Use the search tool below to find ingredients by name, check them to add them to your selection, and choose a metric to compare. Your selection is preserved as you continue searching.
+
+```js
 function makeSelector(ingredients) {
   const selected = new Set();
 
-  // Wrapper
   const el = document.createElement("div");
 
-  // Zoekveld
   const input = Object.assign(document.createElement("input"), {
     type: "text",
-    placeholder: "Zoek ingrediënt, bv. butter, garlic…"
+    placeholder: "Search for an ingredient, e.g. butter, garlic…"
   });
   input.style.cssText = "width:100%; padding:7px 10px; border:1px solid #ccc; border-radius:6px; font-size:14px; box-sizing:border-box; margin-bottom:6px";
 
-  // Resultatenlijst
   const results = document.createElement("div");
   results.style.cssText = "max-height:220px; overflow-y:auto; border:1px solid #e0e0e0; border-radius:6px; margin-bottom:10px; display:none";
 
-  // Chips-rij
   const chips = document.createElement("div");
   chips.style.cssText = "min-height:28px; margin-bottom:4px";
 
@@ -183,7 +251,7 @@ function makeSelector(ingredients) {
 
       const count = document.createElement("small");
       count.style.color = "#999";
-      count.textContent = `${d.count} recepten`;
+      count.textContent = `${d.count} recipes`;
 
       label.append(cb, name, count);
       results.appendChild(label);
@@ -195,13 +263,13 @@ function makeSelector(ingredients) {
     if (selected.size === 0) {
       const msg = document.createElement("span");
       msg.style.cssText = "color:#aaa; font-size:13px";
-      msg.textContent = "Nog niets geselecteerd.";
+      msg.textContent = "Nothing selected yet.";
       chips.appendChild(msg);
       return;
     }
     const lbl = document.createElement("span");
     lbl.style.cssText = "font-size:13px; color:#555; margin-right:6px";
-    lbl.textContent = "Geselecteerd:";
+    lbl.textContent = "Selected:";
     chips.appendChild(lbl);
 
     for (const name of selected) {
@@ -229,14 +297,14 @@ const ingredientSelector = view(makeSelector(ingredientStats));
 
 ```js
 const metrics = [
-  { field: "avg_calories", label: "Calorieën (kcal)" },
-  { field: "avg_rating",   label: "Gemiddelde rating" },
-  { field: "avg_fat",      label: "Vet (g)" },
-  { field: "avg_protein",  label: "Proteïne (g)" },
-  { field: "count",        label: "Populariteit (# recepten)" },
+  { field: "avg_calories", label: "Calories (kcal)" },
+  { field: "avg_rating",   label: "Average rating"  },
+  { field: "avg_fat",      label: "Fat (g)"          },
+  { field: "avg_protein",  label: "Protein (g)"      },
+  { field: "count",        label: "Popularity (# recipes)" },
 ];
 const metric = view(Inputs.select(metrics, {
-  label: "Vergelijk op",
+  label: "Compare by",
   format: d => d.label
 }));
 ```
@@ -244,11 +312,11 @@ const metric = view(Inputs.select(metrics, {
 ```js
 if (ingredientSelector.length === 0) {
   display(html`<p style="color:#888; font-style:italic; margin-top:1rem;">
-    Selecteer een of meer ingrediënten hierboven om ze te vergelijken.
+    Select one or more ingredients above to compare them.
   </p>`);
 } else {
   display(Plot.plot({
-    title: `Vergelijking: ${metric.label}`,
+    title: `Comparison: ${metric.label}`,
     marginBottom: ingredientSelector.length > 3 ? 80 : 50,
     width,
     height: 350,
@@ -267,42 +335,4 @@ if (ingredientSelector.length === 0) {
     ]
   }));
 }
-```
-
----
-
-## De wereld op je bord
-
-Welke ingrediënten zijn typisch voor een bepaalde keuken? We tonen hier niet gewoon de meest gebruikte ingrediënten, maar de meest **kenmerkende** — ingrediënten die relatief veel vaker voorkomen dan je op basis van de volledige dataset zou verwachten. Zo scoort feta hoog bij Grieks, en golden syrup bij Australisch.
-
-```js
-const countries = [...new Set(cuisineData.map(d => d.country))].sort();
-const selectedCountry = view(Inputs.select(countries, { label: "Keuken" }));
-```
-
-```js
-const countryData  = cuisineData
-  .filter(d => d.country === selectedCountry)
-  .sort((a, b) => b.specificity - a.specificity);
-const countryTotal = countryData[0]?.total_recipes ?? 0;
-
-display(Plot.plot({
-  title: `${selectedCountry} — ${countryTotal} recepten`,
-  marginLeft: 210,
-  width,
-  height: countryData.length * 30 + 60,
-  x: { label: "Specificiteitscore (hoe uniek t.o.v. andere keukens)" },
-  y: { label: null },
-  marks: [
-    Plot.barX(countryData, {
-      x: "specificity",
-      y: "ingredient",
-      sort: { y: "-x" },
-      fill: "#e67e22",
-      tip: true,
-      title: d => `${d.ingredient}\n${d.count} van ${d.total_recipes} recepten`
-    }),
-    Plot.ruleX([0])
-  ]
-}));
 ```
