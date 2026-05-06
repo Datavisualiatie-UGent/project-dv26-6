@@ -43,8 +43,8 @@ export default {
   ">
     <strong style="font-size: 1.2rem;">🍽️ Recepten</strong>
     <a href="/" class="nav-link">Home</a>
-    <a href="/allrecipes" class="nav-link">AllRecipes</a>
-    <a href="/Cuisines" class="nav-link">Cuisines</a>
+    <a href="/allrecipes" class="nav-link">Explore</a>
+    <a href="/cuisines" class="nav-link">Cuisines</a>
     <a href="/ingredients" class="nav-link">Ingredients</a>
   </nav>
   <style>
