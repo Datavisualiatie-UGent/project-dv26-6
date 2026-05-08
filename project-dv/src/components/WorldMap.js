@@ -112,7 +112,7 @@ const hoverColorScale = d3.scalePow()
       if (iso && coveredISO.has(iso)) {
         const count = cuisineCount[iso];
         tooltip.style("display", "block")
-          .html(`<strong>${countryToCuisines[iso].join(", ")}</strong><br/><span style="color:#888">${count} keuken${count > 1 ? 's' : ''}</span>`);
+          .html(`<strong>${countryToCuisines[iso].join(", ")}</strong><br/><span style="color:#888">${count} cuisine${count > 1 ? 's' : ''}</span>`);
         d3.select(this).attr("fill", hoverColorScale(count));
       }
     })
@@ -148,13 +148,13 @@ const hoverColorScale = d3.scalePow()
   svg.append("text")
     .attr("x", legendX).attr("y", legendY - 6)
     .attr("font-size", "11px").attr("fill", "#555")
-    .text("1 keuken");
+    .text("1 cuisine");
 
   svg.append("text")
     .attr("x", legendX + legendWidth).attr("y", legendY - 6)
     .attr("font-size", "11px").attr("fill", "#555")
     .attr("text-anchor", "end")
-    .text(`${maxCount} keukens`);
+    .text(`${maxCount} cuisines`);
 
   return svg.node();
   })();
