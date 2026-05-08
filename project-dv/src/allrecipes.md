@@ -1,13 +1,10 @@
 ---
-title: Recepten Visualisatie
+title: Cuisine exploration
 ---
+# Cuisine Exploration
 
-# Recepten Dashboard
-
-Deze pagina toont een eerste visualisatie van de TidyTuesday AllRecipes‑dataset.
-
-## Cuisines
-
+### Cuisines
+Every recipe of our dataset is chosen to be part of a certain cuisine. However, what's meant by cuisine can be rather ambiguous. There might be multiple cuisines used to label a recipe, one more specific than the other. The following word cloud shows you which labels were chosen by the website allrecipes.com to orient the recipes. Although of these labels coincide with countries there are also several more general cases like Scandinavian or more specific like Cajun.
 ```js
 
 const allRecipesRaw = await FileAttachment("data/all_recipes.csv").csv({ typed: true });
@@ -22,9 +19,9 @@ import { Wordcloud } from "./components/Wordcloud.js"
 display(await Wordcloud(cuisines));
 ```
 
-## Tweede plot, wereldkaart
+### Cuisines around the world
 
-Belangrijk om te weten bij deze dataset is welk deel van de wereld het vertegenwoordigt, zoals veel datasets ontbreken bepaalde regio's waaronder vooral het continent Afrika. Deze kaart toont welke landen en keukens er vertegenwoordigd zijn in de dataset
+We think it's also relevant to know which part of the world is represented in this dataset. The world map below does this while also giving some more spatial insight into the other cuisines of the dataset. An interesting observation to make is the fact that some regions are missing, for example the African continent is almost completely missing from the dataset.
 
 ```js
 import { FileAttachment } from "observablehq:stdlib";
@@ -38,4 +35,4 @@ display(await WorldMap(cuisines));
 ```
 
 
-**Groen** = Minstens 1 keuken in de dataset, **Grijs** = Geen keuken
+**Green** = At least 1 cuisine in the dataset, **Grey** = No cuisine in the dataset
