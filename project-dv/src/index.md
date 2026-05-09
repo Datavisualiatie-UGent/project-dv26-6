@@ -75,7 +75,7 @@ invalidation.then(() => observer.disconnect());
 
 <div style="max-width: 600px; margin: 0 auto; text-align: center;">
 <p>
-In this visualisation we will be looking at a large dataset of recipes released by the popular website "AllRecipes".
+In this visualisation we will be looking at a large dataset of recipes released by the popular website "AllRecipes.com".
 The saying "You are what you eat" says it all: you can find out a lot about somebody through their eating habits, or more specifically, their cooking habits. This website gives the viewer the chance to look at how people cook throughout different cultures: what ingrediënts do they use, which nutrients are prominent, how much time do we spend in the kitchen and much more!
 </p>
 <hr>
