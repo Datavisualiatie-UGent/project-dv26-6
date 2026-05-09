@@ -1,5 +1,5 @@
 ---
-title: Recepten Visualisatie
+title: Recipes Visualisation
 ---
 
 <div id="book-container" style="display: flex; justify-content: center; align-items: center; padding: 80px 0; position: relative;">
@@ -80,7 +80,7 @@ The saying "You are what you eat" says it all: you can find out a lot about some
 </p>
 <hr>
 <p>
-The <a href="./AllRecipes">first page</a> allows you to explore the dataset in a more general sense, showing you what we mean by cuisines and which ones are represented.
+The <a href="./exploration">first page</a> allows you to explore the dataset in a more general sense, showing you what we mean by cuisines and which ones are represented.
 The <a href = "./cuisines">cuisines</a> page will help you compare different cultures and their values when it comes to food.
 The <a href = "./ingredients">final page</a> takes a deeper look into the ingredient data.
 </p>

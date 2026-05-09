@@ -1,7 +1,7 @@
 // See https://observablehq.com/framework/config for documentation.
 export default {
   // The app’s title; used in the sidebar and webpage titles.
-  title: "AllRecipes",
+  title: "Home",
 
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
@@ -18,7 +18,7 @@ export default {
 
   pages: [
     { name: "Home", path: "/" },
-    { name: "AllRecipes", path: "/allrecipes" },
+    { name: "Explore", path: "/exploration" },
     { name: "Cuisines", path: "/cuisines" },
     { name: "Ingredients", path: "/ingredients" },
   ],
@@ -41,9 +41,9 @@ export default {
     border-bottom: 1px solid #e5e7eb;
     font-family: sans-serif;
   ">
-    <strong style="font-size: 1.2rem;">🍽️ Recepten</strong>
+    <strong style="font-size: 1.2rem;">🍽️ Recipes</strong>
     <a href="/" class="nav-link">Home</a>
-    <a href="/allrecipes" class="nav-link">Explore</a>
+    <a href="/exploration" class="nav-link">Explore</a>
     <a href="/cuisines" class="nav-link">Cuisines</a>
     <a href="/ingredients" class="nav-link">Ingredients</a>
   </nav>
