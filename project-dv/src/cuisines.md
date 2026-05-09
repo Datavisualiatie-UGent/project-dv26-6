@@ -15,43 +15,82 @@ There are many different cuisines around the world. In our dataset we have ${new
 
 The figure shows a number of recipes with the highest average rating of the chosen cuisine.
 
+## Explore the distribution of recipe features per cuisine
+
+Select a cuisine and a feature to explore how the values are distributed across recipes.
+
 ```js
 const countries = [...new Set(cuisines.map(d => d.country))].sort();
-const selectedCountry = view(Inputs.select(countries, { label: "Choose a cuisine" }));
+
+const selectedCountry = view(
+  Inputs.select(countries, {
+    label: "Choose a cuisine"
+  })
+);
 ```
 
 ```js
-const n = view(Inputs.range([1, 100], {step: 1, value: 10, label: "Choose a maximum number of recipes"}));
+const featureMap = {
+  calories: "Calories",
+  fat: "Fat",
+  protein: "Protein",
+  carbs: "Carbohydrates",
+  cook_time: "Cooking Time",
+  prep_time: "Preparation Time",
+  avg_rating: "Average Rating",
+  total_ratings: "Total Ratings"
+};
+
+const selectedFeature = view(
+  Inputs.select(Object.keys(featureMap), {
+    label: "Choose a feature",
+    format: d => featureMap[d]
+  })
+);
 ```
 
 ```js
-const topRecipes = cuisines
-  .filter(d => d.country === selectedCountry)
-  .filter(d => !isNaN(d.avg_rating))
-  .sort((a, b) => b.avg_rating - a.avg_rating)
-  .slice(0, n);
+const filteredCuisineData = cuisines.filter(
+  d =>
+    d.country === selectedCountry &&
+    d[selectedFeature] != null &&
+    !isNaN(d[selectedFeature])
+);
 ```
 
 ```js
-display(Plot.plot({
-  title: `Best recipes in the ${selectedCountry} cuisine`,
-  marginLeft: 250,
-  width,
-  height: topRecipes.length * 25 + 60,
-  x: { label: "Average rating" },
-  y: { label: null },
-  marks: [
-    Plot.barX(topRecipes, {
-      x: "avg_rating",
-      y: "name",
-      sort: { y: "-x" },
-      fill: "#ff0000",
-      tip: true,
-      title: d => `${d.name}\nRating: ${d.avg_rating.toFixed(2)}`
-    }),
-    Plot.ruleX([0])
-  ]
-}));
+display(
+  Plot.plot({
+    title: `${featureMap[selectedFeature]} distribution in ${selectedCountry} cuisine`,
+    width,
+    height: 500,
+
+    x: {
+      label: featureMap[selectedFeature]
+    },
+
+    y: {
+      label: "Number of recipes"
+    },
+
+    marks: [
+      Plot.rectY(
+        filteredCuisineData,
+        Plot.binX(
+          { y: "count" },
+          {
+            x: selectedFeature,
+            thresholds: 20,
+            fill: "#ff0000",
+            tip: true
+          }
+        )
+      ),
+
+      Plot.ruleY([0])
+    ]
+  })
+);
 ```
 
 ## How many recipes do the different cuisines have?
@@ -285,7 +324,7 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
   const n = axes.length;
   const levels = 5;
   const R = 150;
-  const colors = ["#e05a00", "#2a9d8f"];
+  const colors = ["#ff0000", "#00ff00"];
 
   const selectedCuisines = [selectedCuisine1];
   if (selectedCuisine2 && selectedCuisine2 !== "(none)") selectedCuisines.push(selectedCuisine2);
