@@ -1,5 +1,5 @@
 ---
-title: Keukens
+title: Cuisines
 ---
 
 ```js
@@ -9,19 +9,19 @@ import * as Plot from "@observablehq/plot";
 const cuisines = await FileAttachment("data/cuisines.csv").csv({ typed: true });
 ```
 
-# Wat zijn de verschillen tussen de keukens over de hele wereld?
+# What are the differences between cuisines around the world?
 
-Er zijn veel verschillende keukens over de hele wereld. In onze dataset hebben we er ${new Set(cuisines.map(d => d.country)).size} ter beschikking. Op deze pagina zullen we deze keukens vergelijken en zo een idee krijgen op welke manier ze verschillen van elkaar. Voordat we dit doen, geven we eerst een kort overzicht van welke recepten er bij welke keuken horen.
+There are many different cuisines around the world. In our dataset we have ${new Set(cuisines.map(d => d.country)).size} available. On this page we will compare these cuisines and get an idea of the ways in which they differ from each other. Before we do this, we first give a brief overview of which recipes belong to which cuisine.
 
-In de figuur wordt een aantal recepten met de hoogste gemiddelde beoordeling van de gekozen keuken weergegeven.
+The figure shows a number of recipes with the highest average rating of the chosen cuisine.
 
 ```js
 const countries = [...new Set(cuisines.map(d => d.country))].sort();
-const selectedCountry = view(Inputs.select(countries, { label: "Kies een keuken" }));
+const selectedCountry = view(Inputs.select(countries, { label: "Choose a cuisine" }));
 ```
 
 ```js
-const n = view(Inputs.range([1, 100], {step: 1, value: 10, label: "Kies een maximum aantal recepten"}));
+const n = view(Inputs.range([1, 100], {step: 1, value: 10, label: "Choose a maximum number of recipes"}));
 ```
 
 ```js
@@ -34,11 +34,11 @@ const topRecipes = cuisines
 
 ```js
 display(Plot.plot({
-  title: `Beste recepten in de ${selectedCountry} keuken`,
+  title: `Best recipes in the ${selectedCountry} cuisine`,
   marginLeft: 250,
   width,
   height: topRecipes.length * 25 + 60,
-  x: { label: "Gemiddelde beoordeling" },
+  x: { label: "Average rating" },
   y: { label: null },
   marks: [
     Plot.barX(topRecipes, {
@@ -47,19 +47,18 @@ display(Plot.plot({
       sort: { y: "-x" },
       fill: "#ff0000",
       tip: true,
-      title: d => `${d.name}
-Beoordeling: ${d.avg_rating.toFixed(2)}`
+      title: d => `${d.name}\nRating: ${d.avg_rating.toFixed(2)}`
     }),
     Plot.ruleX([0])
   ]
 }));
 ```
 
-## Hoeveel recepten hebben de verschillende keukens?
+## How many recipes do the different cuisines have?
 
-Een eerste manier waarop keukens kunnen verschillen van elkaar is het aantal recepten dat ze aanbieden. Een keuken die veel recepten aanbiedt heeft meer variatie, terwijl een keuken die weinig recepten aanbiedt misschien enkele bekende klassiekers heeft.
+A first way in which cuisines can differ from each other is the number of recipes they offer. A cuisine that offers many recipes has more variety, while a cuisine that offers few recipes may have a few well-known classics.
 
-In de figuur wordt weergegeven hoeveel recepten er per keuken zijn, gerangschikt van meeste naar minste.
+The figure shows how many recipes there are per cuisine, ranked from most to fewest.
 
 ```js
 const recipesPerCuisine = Object.values(
@@ -73,11 +72,11 @@ const recipesPerCuisine = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Aantal recepten per keuken",
+  title: "Number of recipes per cuisine",
   marginLeft: 180,
   width,
   height: recipesPerCuisine.length * 25 + 40,
-  x: { label: "Aantal recepten" },
+  x: { label: "Number of recipes" },
   y: {
     label: null,
     domain: recipesPerCuisine.map(d => d.country)
@@ -88,18 +87,18 @@ display(Plot.plot({
       y: "country",
       fill: "#ff0000",
       tip: true,
-      title: d => `${d.country}: ${d.count} recepten`
+      title: d => `${d.country}: ${d.count} recipes`
     }),
     Plot.ruleX([0])
   ]
 }));
 ```
 
-## Hoe verschillen de keukens in populariteit?
+## How do cuisines differ in popularity?
 
-Een anders aspect waarin de keukens kunnnen verschillen is de populariteit. Populariteit kan met onze dataset op twee manieren gemeten worden. Ten eerste kunnen we de gemiddelde beoordeling van de recepten van een keuken bekijken. Ten tweede kunnen we kijken naar het aantal beoordelingen dat de recepten van een keuken hebben. We zullen deze twee manieren om populariteit te meten weergeven in eenzelfde figuur.
+A first aspect in which cuisines can differ is popularity. Popularity can be measured in two ways with our dataset. First, we can look at the average rating of the recipes of a cuisine. Second, we can look at the number of ratings that the recipes of a cuisine have received. We will display these two ways of measuring popularity in the same figure.
 
-De onderstaande figuur toont het gemiddelde aantal beoordelingen van een recept per keuken ten opzichte van de gemiddelde gemiddelde beoordeling van een recept per keuken.
+The figure below shows the average number of ratings of a recipe per cuisine relative to the average average rating of a recipe per cuisine.
 
 ```js
 const cuisineStats = Object.values(
@@ -131,12 +130,12 @@ const cuisineStats = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Populariteit van de keukens",
+  title: "Popularity of cuisines",
   width,
   height: 600,
 
-  x: { label: "Gemiddeld aantal beoordelingen", domain: [0, 200] },
-  y: { label: "Gemiddelde gemiddelde beoordeling", domain: [4, 5] },
+  x: { label: "Average number of ratings", domain: [0, 200] },
+  y: { label: "Average average rating", domain: [4, 5] },
 
   marks: [
     Plot.dot(cuisineStats, {
@@ -147,9 +146,7 @@ display(Plot.plot({
       stroke: "#ff0000",
       tip: true,
       title: d =>
-        `${d.country}
-Gemiddelde beoordeling: ${d.avg_rating.toFixed(2)}
-Aantal beoordelingen: ${Math.round(d.avg_total_ratings)}`
+        `${d.country}\nAverage rating: ${d.avg_rating.toFixed(2)}\nNumber of ratings: ${Math.round(d.avg_total_ratings)}`
     }),
 
     Plot.text(cuisineStats, {
@@ -163,11 +160,11 @@ Aantal beoordelingen: ${Math.round(d.avg_total_ratings)}`
 }));
 ```
 
-## Hoe verschillen de keukens in de duur van het maken van de recepten?
+## How do cuisines differ in the time it takes to make the recipes?
 
-Een derde manier waarop we de keukens kunnen vergelijken is hoelang het duurt om een recept te maken. Hiervoor zijn er drie variabelen beschikbaar in de dataset. Ten eerste is er de voorbereidingstijd van de recepten. Ten tweede is er de kooktijd van de recepten. Ten slotte, is er nog de totale tijd, de som van de twee voorgaande. We zullen de voorbereidingstijd en de kooktijd gebruiken om de keukens te vergelijken.
+A second way in which we can compare cuisines is how long it takes to make a recipe. For this, three variables are available in the dataset. First, there is the preparation time of the recipes. Second, there is the cooking time of the recipes. Finally, there is the total time, the sum of the two previous. We will use the preparation time and the cooking time to compare the cuisines.
 
-In de onderstaande figuur wordt de gemiddelde voorbereidingstijd van een recept per keuken ten opzichte van de gemiddelde kooktijd van een recept per keuken weergegeven.
+The figure below shows the average preparation time of a recipe per cuisine relative to the average cooking time of a recipe per cuisine.
 
 ```js
 const cuisineStats2 = Object.values(
@@ -199,12 +196,12 @@ const cuisineStats2 = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Voorbereidingstijd en kooktijd van de keukens",
+  title: "Preparation time and cooking time of cuisines",
   width,
   height: 600,
 
-  x: { label: "Gemiddelde voorbereidingstijd in minuten", domain: [0, 90] },
-  y: { label: "Gemiddelde kooktijd in minuten", domain: [0, 90] },
+  x: { label: "Average preparation time in minutes", domain: [0, 90] },
+  y: { label: "Average cooking time in minutes", domain: [0, 90] },
 
   marks: [
     Plot.dot(cuisineStats2, {
@@ -215,9 +212,7 @@ display(Plot.plot({
       stroke: "#ff0000",
       tip: true,
       title: d =>
-        `${d.country}
-Voorbereidingstijd: ${Math.round(d.avg_prep_time)} min
-Kooktijd: ${Math.round(d.avg_cook_time)} min`
+        `${d.country}\nPreparation time: ${Math.round(d.avg_prep_time)} min\nCooking time: ${Math.round(d.avg_cook_time)} min`
     }),
 
     Plot.text(cuisineStats2, {
@@ -231,11 +226,11 @@ Kooktijd: ${Math.round(d.avg_cook_time)} min`
 }));
 ```
 
-## Hoe verschillen de keukens in de voedingswaarden van hun recepten?
+## How do cuisines differ in the nutritional values of their recipes?
 
-De laatste manier waarop we de keukens kunnen vergelijken zijn de voedingswaarden van hun recepten. Hiertoe hebben we voor al de recepten het aantal kilocalorieën, vetten, koolhydraten en proteïnen beschikbaar. We zullen deze allemaal gebruiken, waarbij de gebruiker de keuze heeft welke keukens er getoond worden.
+The last way in which we can compare cuisines is the nutritional values of their recipes. For this we have for all recipes the number of kilocalories, fats, carbohydrates and proteins available. We will use all of these, whereby the user has the choice of which cuisines are displayed.
 
-De onderstaande figuur toont ...
+The radar chart below shows for each chosen cuisine the average values of the four nutrients. Each axis represents one nutrient, normalised relative to the maximum across all cuisines. Hover over a point to see the exact value.
 
 ```js
 const cuisineStats3 = Object.values(
@@ -243,14 +238,9 @@ const cuisineStats3 = Object.values(
     if (!acc[d.country]) {
       acc[d.country] = {
         country: d.country,
-        sumCal: 0,
-        sumFat: 0,
-        sumCar: 0,
-        sumPro: 0,
-        count: 0
+        sumCal: 0, sumFat: 0, sumCar: 0, sumPro: 0, count: 0
       };
     }
-
     if (!isNaN(d.calories) && !isNaN(d.fat) && !isNaN(d.carbs) && !isNaN(d.protein)) {
       acc[d.country].sumCal += d.calories;
       acc[d.country].sumFat += d.fat;
@@ -258,7 +248,6 @@ const cuisineStats3 = Object.values(
       acc[d.country].sumPro += d.protein;
       acc[d.country].count += 1;
     }
-
     return acc;
   }, {})
 ).map(d => ({
@@ -272,5 +261,135 @@ const cuisineStats3 = Object.values(
 ```
 
 ```js
+const allCountriesNutrition = cuisineStats3.map(d => d.country).sort();
+const selectedCuisine1 = view(Inputs.select(allCountriesNutrition, {
+  label: "Cuisine 1",
+  value: allCountriesNutrition[0]
+}));
+```
 
+```js
+const secondOptions = ["(none)", ...allCountriesNutrition.filter(c => c !== selectedCuisine1)];
+const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (optional)" }));
+```
+
+```js
+{
+  const axes = [
+    { key: "avg_cal", label: "Calories",      unit: "kcal", decimals: 0 },
+    { key: "avg_fat", label: "Fat",            unit: "g",    decimals: 1 },
+    { key: "avg_car", label: "Carbohydrates",  unit: "g",    decimals: 1 },
+    { key: "avg_pro", label: "Protein",        unit: "g",    decimals: 1 },
+  ];
+
+  const n = axes.length;
+  const levels = 5;
+  const R = 150;
+  const colors = ["#e05a00", "#2a9d8f"];
+
+  const selectedCuisines = [selectedCuisine1];
+  if (selectedCuisine2 && selectedCuisine2 !== "(none)") selectedCuisines.push(selectedCuisine2);
+
+  const maxVal = {};
+  for (const ax of axes) maxVal[ax.key] = Math.max(...cuisineStats3.map(d => d[ax.key]));
+
+  const angleOf = (i) => (2 * Math.PI * i) / n - Math.PI / 2;
+  const toXY = (i, r) => ({
+    x: r * Math.cos(angleOf(i)),
+    y: r * Math.sin(angleOf(i))
+  });
+
+  // Grid polygons
+  const gridPoints = [];
+  for (let lvl = 1; lvl <= levels; lvl++) {
+    const r = R * (lvl / levels);
+    for (let i = 0; i <= n; i++) {
+      const { x, y } = toXY(i % n, r);
+      gridPoints.push({ x, y, lvl });
+    }
+  }
+
+  // Axis lines
+  const axisLines = axes.flatMap((ax, i) => [
+    { x: 0, y: 0, axis: i },
+    { x: toXY(i, R).x, y: toXY(i, R).y, axis: i }
+  ]);
+
+  // Axis labels
+  const axisLabels = axes.map((ax, i) => {
+    const { x, y } = toXY(i, R + 28);
+    return { x, y, label: `${ax.label} (${ax.unit})` };
+  });
+
+  // Data points & lines
+  const dataLines = [];
+  const dataDots  = [];
+  selectedCuisines.forEach((cuisine, s) => {
+    const row = cuisineStats3.find(d => d.country === cuisine);
+    if (!row) return;
+    axes.forEach((ax, i) => {
+      const r = R * (row[ax.key] / maxVal[ax.key]);
+      const { x, y } = toXY(i, r);
+      const raw = row[ax.key];
+      const formatted = ax.decimals === 0
+        ? `${Math.round(raw)} ${ax.unit}`
+        : `${raw.toFixed(ax.decimals)} ${ax.unit}`;
+      dataLines.push({ x, y, cuisine, colorIndex: s });
+      dataDots.push({ x, y, cuisine, label: ax.label, value: formatted, colorIndex: s });
+    });
+    // Close the polygon
+    const ax0 = axes[0];
+    const r0 = R * (row[ax0.key] / maxVal[ax0.key]);
+    const { x: x0, y: y0 } = toXY(0, r0);
+    dataLines.push({ x: x0, y: y0, cuisine, colorIndex: s });
+  });
+
+  display(Plot.plot({
+    width: 520,
+    height: 520,
+    marginTop: 40,
+    marginBottom: 40,
+    marginLeft: 40,
+    marginRight: 40,
+    x: { domain: [-R - 50, R + 50], axis: null },
+    y: { domain: [-R - 50, R + 50], axis: null },
+    color: {
+      domain: selectedCuisines,
+      range: colors.slice(0, selectedCuisines.length),
+      legend: true
+    },
+    marks: [
+      Plot.line(gridPoints, {
+        x: "x", y: "y", z: "lvl",
+        stroke: "#ccc", strokeWidth: 0.8,
+        fill: d => d.lvl % 2 === 0 ? "#efefef" : "#e6e6e6",
+      }),
+      Plot.line(axisLines, {
+        x: "x", y: "y", z: "axis",
+        stroke: "#bbb", strokeWidth: 1
+      }),
+      Plot.text(axisLabels, {
+        x: "x", y: "y",
+        text: "label",
+        fontSize: 11,
+        fontWeight: "bold",
+        fill: "#444",
+        textAnchor: "middle"
+      }),
+      Plot.line(dataLines, {
+        x: "x", y: "y", z: "cuisine",
+        stroke: "cuisine", strokeWidth: 2.5,
+        fill: "cuisine", fillOpacity: 0.15,
+        curve: "linear-closed"
+      }),
+      Plot.dot(dataDots, {
+        x: "x", y: "y",
+        fill: "cuisine", r: 5,
+        stroke: "white", strokeWidth: 1.5,
+        tip: true,
+        title: d => `${d.cuisine}\n${d.label}: ${d.value}`
+      }),
+    ]
+  }));
+}
 ```
