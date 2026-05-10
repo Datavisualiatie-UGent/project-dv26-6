@@ -2,6 +2,69 @@
 title: Cuisines
 ---
 
+<style>
+
+
+select option {
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background: #fff;
+  color: #333;
+}
+
+select option:hover,
+select option:checked {
+  background: #534AB7;
+  color: #fff;
+}
+
+select {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+select:focus {
+  border-color: #534AB7;
+}
+input[type=range] {
+  accent-color: #534AB7;
+  appearance: none;
+  height: 4px;
+  border-radius: 99px;
+  background: #ddd;
+  outline: none;
+  width: 100%;
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #534AB7;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  cursor: pointer;
+}
+input[type=number] {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  outline: none;
+  font-size: 14px;
+}
+input[type=number]:focus {
+  border-color: #534AB7;
+}
+</style>
+
 ```js
 import * as Plot from "@observablehq/plot";
 
@@ -321,18 +384,8 @@ display(
     x: { label: "Total Ratings" },
     y: { label: "Number of recipes" },
     marks: [
-      Plot.rectY(
-        greekRatingsData,
-        Plot.binX(
-          { y: "count" },
-          {
-            x: "total_ratings",
-            thresholds: 20,
-            fill: "#8A9A2A",
-            tip: true
-          }
-        )
-      ),
+      Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
+      Plot.rectY(greekRatingsData, Plot.binX({ y: "count" }, { x: "total_ratings", thresholds: 20, fill: "#8A9A2A", tip: true })),
       Plot.ruleY([0])
     ]
   })
@@ -355,18 +408,19 @@ display(
     x: { label: "Average Rating" },
     y: { label: "Number of recipes" },
     marks: [
+      Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
       Plot.rectY(
-        southernRatingsData,
-        Plot.binX(
-          { y: "count" },
-          {
-            x: "avg_rating",
-            thresholds: 20,
-            fill: "#D4A820",
-            tip: true
-          }
-        )
-      ),
+      southernRatingsData,
+      Plot.binX(
+        { y: "count" },
+        {
+          x: "avg_rating",
+          thresholds: d3.range(4.0, 5.1, 0.1),
+          fill: "#D4A820",
+          tip: true
+        }
+      )
+    ),
       Plot.ruleY([0])
     ]
   })
@@ -466,61 +520,37 @@ We have labeled them in the main plot and added secondary plots displaying the d
 We first show the preparation time distribution of the Norwegian cuisine, and then of the Portuguese cuisine.
 
 ```js
-const norwegianPrepData = cuisines.filter(d => d.country === "Norwegian" && d.prep_time != null && !isNaN(d.prep_time));
+{
+  const norwegianPrepData = cuisines.filter(d => d.country === "Norwegian" && d.prep_time != null && !isNaN(d.prep_time));
+  const portuguesePrepData = cuisines.filter(d => d.country === "Portuguese" && d.prep_time != null && !isNaN(d.prep_time));
 
-display(
-  Plot.plot({
-    title: `Preparation Time distribution in Norwegian cuisine`,
-    width: 700,
-    height: 450,
-    x: { label: "Preparation Time" },
-    y: { label: "Number of recipes" },
-    marks: [
-      Plot.rectY(
-        norwegianPrepData,
-        Plot.binX(
-          { y: "count" },
-          {
-            x: "prep_time",
-            thresholds: 20,
-            fill: "#C43A2A",
-            tip: true
-          }
-        )
-      ),
-      Plot.ruleY([0])
-    ]
-  })
-);
-```
-
-```js
-const portuguesePrepData = cuisines.filter(d => d.country === "Portuguese" && d.prep_time != null && !isNaN(d.prep_time));
-
-display(
-  Plot.plot({
-    title: `Preparation Time distribution in Portuguese cuisine`,
-    width: 700,
-    height: 450,
-    x: { label: "Preparation Time" },
-    y: { label: "Number of recipes" },
-    marks: [
-      Plot.rectY(
-        portuguesePrepData,
-        Plot.binX(
-          { y: "count" },
-          {
-            x: "prep_time",
-            thresholds: 20,
-            fill: "#D4722A",
-            tip: true
-          }
-        )
-      ),
-      Plot.ruleY([0])
-    ]
-  })
-);
+  display(html`
+    <div style="display: flex; gap: 16px;">
+      ${Plot.plot({
+        title: "Preparation Time distribution in Norwegian cuisine",
+        width: 350, height: 350,
+        x: { label: "Preparation Time" },
+        y: { label: "Number of recipes" },
+        marks: [
+          Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
+          Plot.rectY(norwegianPrepData, Plot.binX({ y: "count" }, { x: "prep_time", thresholds: 20, fill: "#C43A2A", tip: true })),
+          Plot.ruleY([0])
+        ]
+      })}
+      ${Plot.plot({
+        title: "Preparation Time distribution in Portuguese cuisine",
+        width: 350, height: 350,
+        x: { label: "Preparation Time" },
+        y: { label: "Number of recipes" },
+        marks: [
+          Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
+          Plot.rectY(portuguesePrepData, Plot.binX({ y: "count" }, { x: "prep_time", thresholds: 20, fill: "#D4722A", tip: true })),
+          Plot.ruleY([0])
+        ]
+      })}
+    </div>
+  `);
+}
 ```
 
 For both cuisines, we can conclude that there are one or two recipes with a very extreme preparation time that make the total average over all the recipes extreme.
@@ -587,7 +617,7 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
   const n = axes.length;
   const levels = 5;
   const R = 150;
-  const colors = ["#ff0000", "#00ff00"];
+  const colors = ["#C43A2A", "#D4A820"];
 
   const selectedCuisines = [selectedCuisine1];
   if (selectedCuisine2 && selectedCuisine2 !== "(none)") selectedCuisines.push(selectedCuisine2);
@@ -654,13 +684,13 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
     color: {
       domain: selectedCuisines,
       range: colors.slice(0, selectedCuisines.length),
-      legend: true
+      legend: false
     },
     marks: [
       Plot.line(gridPoints, {
         x: "x", y: "y", z: "lvl",
-        stroke: "#ccc", strokeWidth: 0.8,
-        fill: d => d.lvl % 2 === 0 ? "#efefef" : "#e6e6e6",
+        stroke: "#ddd", strokeWidth: 0.6,
+        fill: "none",
       }),
       Plot.line(axisLines, {
         x: "x", y: "y", z: "axis",

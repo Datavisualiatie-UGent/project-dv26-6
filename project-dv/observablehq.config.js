@@ -17,11 +17,10 @@ export default {
   // ],
 
   pages: [
-    { name: "Home", path: "/" },
-    { name: "Explore", path: "/exploration" },
-    { name: "Cuisines", path: "/cuisines" },
-    { name: "Ingredients", path: "/ingredients" },
-  ],
+    { name: "Home", path: "/" , pager: false },
+    { name: "Explore", path: "/exploration" , pager: false },
+    { name: "Cuisines", path: "/cuisines" , pager: false },
+    { name: "Ingredients", path: "/ingredients" , pager: false }  ],
 
   // Content to add to the head of the page, e.g. for a favicon:
   head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32">',
@@ -35,17 +34,20 @@ export default {
   header: `<nav style="
     display: flex;
     align-items: center;
-    gap: 2rem;
+    justify-content: space-between;
     padding: 1rem 2rem;
     background: white;
     border-bottom: 1px solid #e5e7eb;
     font-family: sans-serif;
+    margin-top: -0.7rem;
   ">
-    <strong style="font-size: 1.2rem;">🍽️ Recipes</strong>
-    <a href="/" class="nav-link">Home</a>
-    <a href="/exploration" class="nav-link">Explore</a>
-    <a href="/cuisines" class="nav-link">Cuisines</a>
-    <a href="/ingredients" class="nav-link">Ingredients</a>
+    <strong style="font-size: 1.1rem; margin-left: 2rem; margin-bottom: 0.3rem;">🍽️ Recipes</strong>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/exploration" class="nav-link">Explore</a>
+      <a href="/cuisines" class="nav-link">Cuisines</a>
+      <a href="/ingredients" class="nav-link">Ingredients</a>
+    </div>
   </nav>
   <style>
     .nav-link {
@@ -56,15 +58,8 @@ export default {
       padding: 0.4rem 1rem;
       transition: background-color 0.2s;
     }
-    .nav-link.active {
-      color: #00a896 !important;
-    }
-    
-    .nav-link:hover {
-      background-color: #f3f4f6;
-      border-radius: 999px;
-      padding: 0.4rem 1rem;
-    }
+    .nav-link.active { color: #00a896 !important; }
+    .nav-link:hover { background-color: #efefef; }
   </style>
   <script>
     function setActiveLink() {
@@ -72,17 +67,12 @@ export default {
         link.classList.remove('active');
         const linkPath = link.pathname.replace(/\\/+$/, '') || '/';
         const currentPath = window.location.pathname.replace(/\\/+$/, '') || '/';
-        if (linkPath === currentPath) {
-          link.classList.add('active');
-        }
+        if (linkPath === currentPath) link.classList.add('active');
       });
     }
-
     setActiveLink();
-
     const observer = new MutationObserver(setActiveLink);
     observer.observe(document.body, { childList: true, subtree: true });
-
     window.addEventListener('popstate', setActiveLink);
   </script>`,
 

@@ -22,6 +22,53 @@ The AllRecipes dataset contains **${ingredients.length.toLocaleString("en")} uni
 
 Every cuisine has its building blocks. Salt leads by a wide margin, appearing in over a third of all recipes. Sugar, flour and butter follow — the cornerstones of Western home cooking. Use the slider to expand or narrow the list.
 
+<style>
+select {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+select:focus {
+  border-color: #534AB7;
+}
+input[type=range] {
+  accent-color: #534AB7;
+  appearance: none;
+  height: 4px;
+  border-radius: 99px;
+  background: #ddd;
+  outline: none;
+  width: 100%;
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #534AB7;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  cursor: pointer;
+}
+input[type=number] {
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 4px 10px;
+  outline: none;
+  font-size: 14px;
+}
+input[type=number]:focus {
+  border-color: #534AB7;
+}
+</style>
+
 ```js
 const n = view(Inputs.range([10, 50], { step: 5, value: 20, label: "Number of ingredients" }));
 ```
