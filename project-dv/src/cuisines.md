@@ -470,7 +470,7 @@ const portuguesePrepData = cuisines.filter(d => d.country === "Portuguese" && d.
 
 display(
   Plot.plot({
-    title: `Preparation Time distribution in Portuguese`,
+    title: `Preparation Time distribution in Portuguese cuisine`,
     width: 700,
     height: 450,
     x: { label: "Preparation Time" },
