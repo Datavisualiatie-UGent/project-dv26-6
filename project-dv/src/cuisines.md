@@ -258,7 +258,7 @@ const cuisineStats = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Popularity of cuisines (Averages)",
+  title: "Popularity of cuisines",
   width,
   height: 450,
   color: {
@@ -299,61 +299,61 @@ display(Plot.plot({
 Below you can explore the individual recipes for the **Greek** and **Southern Recipes** cuisines. This shows the variance and lets us see if a few viral recipes are skewing the average, or if the cuisine as a whole is structurally more popular.
 
 ```js
-const popularityOutliers = cuisines.filter(d => 
-  (d.country === "Greek") && 
-  !isNaN(d.avg_rating) && !isNaN(d.total_ratings)
+const greekRatingsData = cuisines.filter(d => d.country === "Greek" && d.total_ratings != null && !isNaN(d.total_ratings));
+
+display(
+  Plot.plot({
+    title: `Total Ratings distribution in Greek cuisine`,
+    width: 700,
+    height: 450,
+    x: { label: "Total Ratings" },
+    y: { label: "Number of recipes" },
+    marks: [
+      Plot.rectY(
+        greekRatingsData,
+        Plot.binX(
+          { y: "count" },
+          {
+            x: "total_ratings",
+            thresholds: 20,
+            fill: "#ff0000",
+            tip: true
+          }
+        )
+      ),
+      Plot.ruleY([0])
+    ]
+  })
 );
-
-display(Plot.plot({
-  title: "Individual Recipes: Greek",
-  width,
-  height: 450,
-  color: { legend: true },
-  
-  x: { label: "Total number of ratings" },
-  y: { label: "Average rating", domain: [2, 5.2] },
-
-  marks: [
-    Plot.dot(popularityOutliers, {
-      x: "total_ratings",
-      y: "avg_rating",
-      r: 4,
-      fill: "country",
-      opacity: 0.7,
-      tip: true,
-      title: d => `${d.name}\n${d.country}\nRating: ${d.avg_rating}\nReviews: ${d.total_ratings}`
-    })
-  ]
-}));
 ```
 
 ```js
-const popularityOutliers = cuisines.filter(d => 
-  (d.country === "Southern Recipes") && 
-  !isNaN(d.avg_rating) && !isNaN(d.total_ratings)
+const southernRatingsData = cuisines.filter(d => d.country === "Southern Recipes" && d.avg_rating != null && !isNaN(d.avg_rating));
+
+display(
+  Plot.plot({
+    title: `Average Rating distribution in Southern Recipes cuisine`,
+    width: 700,
+    height: 450,
+    x: { label: "Average Rating" },
+    y: { label: "Number of recipes" },
+    marks: [
+      Plot.rectY(
+        southernRatingsData,
+        Plot.binX(
+          { y: "count" },
+          {
+            x: "avg_rating",
+            thresholds: 20,
+            fill: "#ff0000",
+            tip: true
+          }
+        )
+      ),
+      Plot.ruleY([0])
+    ]
+  })
 );
-
-display(Plot.plot({
-  title: "Individual Recipes: Southern Recipes",
-  width,
-  height: 450,
-  color: { legend: true },
-  
-  x: { label: "Total number of ratings" },
-  y: { label: "Average rating", domain: [2, 5.2] },
-
-  marks: [
-    Plot.dot(popularityOutliers, {
-      x: "total_ratings",
-      y: "avg_rating",
-      r: 4,
-      fill: "country",
-      opacity: 0.7,
-      tip: true,
-      title: d => `${d.name}\n${d.country}\nRating: ${d.avg_rating}\nReviews: ${d.total_ratings}`
-    })
-  ]
-}));
 ```
 
 ## How do cuisines differ in the time it takes to make the recipes?
@@ -396,7 +396,7 @@ const cuisineStats2 = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Preparation time and cooking time of cuisines (Averages)",
+  title: "Preparation time and cooking time of cuisines",
   width,
   height: 450,
   color: {
@@ -437,61 +437,61 @@ display(Plot.plot({
 Below is the distribution of the individual recipes for **Norwegian** and **Portuguese** cuisines. It helps identify if one extremely slow-cooking recipe is heavily impacting the cuisine's average.
 
 ```js
-const timeOutliers = cuisines.filter(d => 
-  (d.country === "Norwegian") && 
-  !isNaN(d.prep_time) && !isNaN(d.cook_time)
+const norwegianPrepData = cuisines.filter(d => d.country === "Norwegian" && d.prep_time != null && !isNaN(d.prep_time));
+
+display(
+  Plot.plot({
+    title: `Preparation Time distribution in Norwegian cuisine`,
+    width: 700,
+    height: 450,
+    x: { label: "Preparation Time" },
+    y: { label: "Number of recipes" },
+    marks: [
+      Plot.rectY(
+        norwegianPrepData,
+        Plot.binX(
+          { y: "count" },
+          {
+            x: "prep_time",
+            thresholds: 20,
+            fill: "#ff0000",
+            tip: true
+          }
+        )
+      ),
+      Plot.ruleY([0])
+    ]
+  })
 );
-
-display(Plot.plot({
-  title: "Individual Recipes: Norwegian",
-  width,
-  height: 450,
-  color: { legend: true },
-  
-  x: { label: "Cooking time in minutes" },
-  y: { label: "Preparation time in minutes" },
-
-  marks: [
-    Plot.dot(timeOutliers, {
-      x: "cook_time",
-      y: "prep_time",
-      r: 4,
-      fill: "country",
-      opacity: 0.7,
-      tip: true,
-      title: d => `${d.name}\n${d.country}\nCooking time: ${d.cook_time} min\nPreparation time: ${d.prep_time} min`
-    })
-  ]
-}));
 ```
 
 ```js
-const timeOutliers = cuisines.filter(d => 
-  (d.country === "Portuguese") && 
-  !isNaN(d.prep_time) && !isNaN(d.cook_time)
+const portuguesePrepData = cuisines.filter(d => d.country === "Portuguese" && d.prep_time != null && !isNaN(d.prep_time));
+
+display(
+  Plot.plot({
+    title: `Preparation Time distribution in Portuguese`,
+    width: 700,
+    height: 450,
+    x: { label: "Preparation Time" },
+    y: { label: "Number of recipes" },
+    marks: [
+      Plot.rectY(
+        portuguesePrepData,
+        Plot.binX(
+          { y: "count" },
+          {
+            x: "prep_time",
+            thresholds: 20,
+            fill: "#ff0000",
+            tip: true
+          }
+        )
+      ),
+      Plot.ruleY([0])
+    ]
+  })
 );
-
-display(Plot.plot({
-  title: "Individual Recipes: Portuguese",
-  width,
-  height: 450,
-  color: { legend: true },
-  
-  x: { label: "Cooking time in minutes" },
-  y: { label: "Preparation time in minutes" },
-
-  marks: [
-    Plot.dot(timeOutliers, {
-      x: "cook_time",
-      y: "prep_time",
-      r: 4,
-      fill: "country",
-      opacity: 0.7,
-      tip: true,
-      title: d => `${d.name}\n${d.country}\nCooking time: ${d.cook_time} min\nPreparation time: ${d.prep_time} min`
-    })
-  ]
-}));
 ```
 
 ## How do cuisines differ in the nutritional values of their recipes?
@@ -608,8 +608,9 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
   });
 
   display(Plot.plot({
-    width: 520,
-    height: 520,
+    title: "Nutritional Values",
+    width: 450,
+    height: 450,
     marginTop: 40,
     marginBottom: 40,
     marginLeft: 40,
