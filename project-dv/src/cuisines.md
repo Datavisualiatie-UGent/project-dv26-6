@@ -5,7 +5,6 @@ title: Cuisines
 ```js
 import * as Plot from "@observablehq/plot";
 
-
 const cuisines = await FileAttachment("data/cuisines.csv").csv({ typed: true });
 ```
 
@@ -84,7 +83,6 @@ display(
   html`
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start;">
 
-      <!-- HISTOGRAM -->
       <div>
         ${Plot.plot({
           title: `${featureMap[selectedFeature]} distribution in ${selectedCountry} cuisine (${filteredCuisineData.length} recipes)`,
@@ -112,7 +110,6 @@ display(
         })}
       </div>
 
-      <!-- RECIPE STATS (FIXED GRID LAYOUT) -->
       <div>
         <h3 style="margin-bottom: 10px;">
           ${selectedRecipe?.name}
@@ -136,12 +133,10 @@ display(
                 align-items: center;
               ">
 
-                <!-- LABEL -->
                 <div style="font-weight: 600; color: #333;">
                   ${featureMap[key] ?? key}
                 </div>
 
-                <!-- VALUE -->
                 <div style="text-align: right; color: #111;">
                   ${selectedRecipe?.[key]}
                 </div>
@@ -161,14 +156,83 @@ display(
 
 A first aspect in which cuisines can differ is popularity. Popularity can be measured in two ways with our dataset. First, we can look at the average rating of the recipes of a cuisine. Second, we can look at the number of ratings that the recipes of a cuisine have received. We will display these two ways of measuring popularity in the same figure.
 
+**Outlier Analysis:** As you will notice in the plot below, most cuisines cluster together, but there are a few notable outliers. Specifically, **Greek** and **Southern Recipes** stand out strongly in terms of popularity metrics. We have labeled them in the main plot and added a secondary plot displaying the individual recipes from these two cuisines to investigate what drives these outlier values.
+
 The figure below shows the average number of ratings of a recipe per cuisine relative to the average average rating of a recipe per cuisine.
 
 ```js
+const getContinent = (country) => {
+  const map = {
+    // North America
+    "Amish and Mennonite": "North America",
+    "Cajun and Creole": "North America",
+    "Canadian": "North America",
+    "Cuban": "North America",
+    "Jamaican": "North America",
+    "Puerto Rican": "North America",
+    "Soul Food": "North America",
+    "Southern Recipes": "North America",
+    "Tex-Mex": "North America",
+
+    // South America
+    "Argentinian": "South America",
+    "Brazilian": "South America",
+    "Chilean": "South America",
+    "Colombian": "South America",
+    "Peruvian": "South America",
+
+    // Europe
+    "Austrian": "Europe",
+    "Belgian": "Europe",
+    "Danish": "Europe",
+    "Dutch": "Europe",
+    "Finnish": "Europe",
+    "French": "Europe",
+    "German": "Europe",
+    "Greek": "Europe",
+    "Italian": "Europe",
+    "Norwegian": "Europe",
+    "Polish": "Europe",
+    "Portuguese": "Europe",
+    "Russian": "Europe",
+    "Scandinavian": "Europe",
+    "Spanish": "Europe",
+    "Swedish": "Europe",
+    "Swiss": "Europe",
+
+    // Asia
+    "Bangladeshi": "Asia",
+    "Chinese": "Asia",
+    "Filipino": "Asia",
+    "Indian": "Asia",
+    "Indonesian": "Asia",
+    "Israeli": "Asia",
+    "Japanese": "Asia",
+    "Jewish": "Asia",
+    "Korean": "Asia",
+    "Lebanese": "Asia",
+    "Malaysian": "Asia",
+    "Pakistani": "Asia",
+    "Persian": "Asia",
+    "Thai": "Asia",
+    "Turkish": "Asia",
+    "Vietnamese": "Asia",
+
+    // Africa
+    "South African": "Africa",
+
+    // Oceania
+    "Australian and New Zealander": "Oceania"
+  };
+  return map[country];
+};
+
 const cuisineStats = Object.values(
   cuisines.reduce((acc, d) => {
     if (!acc[d.country]) {
       acc[d.country] = {
         country: d.country,
+        continent: d.continent || getContinent(d.country),
         sumRating: 0,
         sumRatingsCount: 0,
         count: 0
@@ -185,6 +249,7 @@ const cuisineStats = Object.values(
   }, {})
 ).map(d => ({
   country: d.country,
+  continent: d.continent,
   avg_rating: d.sumRating / d.count,
   avg_total_ratings: d.sumRatingsCount / d.count,
   count: d.count
@@ -193,9 +258,14 @@ const cuisineStats = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Popularity of cuisines",
+  title: "Popularity of cuisines (Averages)",
   width,
-  height: 600,
+  height: 450,
+  color: {
+    legend: true,
+    domain: ["Europe", "North America", "Asia", "South America", "Africa", "Oceania"],
+    range: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff", "#00ffff", "#000000"] 
+  },
 
   x: { label: "Average number of ratings", domain: [0, 200] },
   y: { label: "Average average rating", domain: [4, 5] },
@@ -204,20 +274,83 @@ display(Plot.plot({
     Plot.dot(cuisineStats, {
       x: "avg_total_ratings",
       y: "avg_rating",
-      r: 4,
-      fill: "#ff0000",
-      stroke: "#ff0000",
+      r: 6,
+      fill: "continent",
+      stroke: "white", 
+      strokeWidth: 0.5,
       tip: true,
       title: d =>
-        `${d.country}\nAverage rating: ${d.avg_rating.toFixed(2)}\nNumber of ratings: ${Math.round(d.avg_total_ratings)}`
+        `${d.country} (${d.continent})\nAverage rating: ${d.avg_rating.toFixed(2)}\nNumber of ratings: ${Math.round(d.avg_total_ratings)}`
     }),
-
-    Plot.text(cuisineStats, {
+    Plot.text(cuisineStats.filter(d => d.country === "Greek" || d.country === "Southern Recipes"), {
       x: "avg_total_ratings",
       y: "avg_rating",
       text: "country",
-      dy: -8,
-      fontSize: 10
+      dy: -15,
+      fontWeight: "bold",
+      fill: "black",
+      stroke: "white",
+      strokeWidth: 3
+    })
+  ]
+}));
+```
+
+Below you can explore the individual recipes for the **Greek** and **Southern Recipes** cuisines. This shows the variance and lets us see if a few viral recipes are skewing the average, or if the cuisine as a whole is structurally more popular.
+
+```js
+const popularityOutliers = cuisines.filter(d => 
+  (d.country === "Greek") && 
+  !isNaN(d.avg_rating) && !isNaN(d.total_ratings)
+);
+
+display(Plot.plot({
+  title: "Individual Recipes: Greek",
+  width,
+  height: 450,
+  color: { legend: true },
+  
+  x: { label: "Total number of ratings" },
+  y: { label: "Average rating", domain: [2, 5.2] },
+
+  marks: [
+    Plot.dot(popularityOutliers, {
+      x: "total_ratings",
+      y: "avg_rating",
+      r: 4,
+      fill: "country",
+      opacity: 0.7,
+      tip: true,
+      title: d => `${d.name}\n${d.country}\nRating: ${d.avg_rating}\nReviews: ${d.total_ratings}`
+    })
+  ]
+}));
+```
+
+```js
+const popularityOutliers = cuisines.filter(d => 
+  (d.country === "Southern Recipes") && 
+  !isNaN(d.avg_rating) && !isNaN(d.total_ratings)
+);
+
+display(Plot.plot({
+  title: "Individual Recipes: Southern Recipes",
+  width,
+  height: 450,
+  color: { legend: true },
+  
+  x: { label: "Total number of ratings" },
+  y: { label: "Average rating", domain: [2, 5.2] },
+
+  marks: [
+    Plot.dot(popularityOutliers, {
+      x: "total_ratings",
+      y: "avg_rating",
+      r: 4,
+      fill: "country",
+      opacity: 0.7,
+      tip: true,
+      title: d => `${d.name}\n${d.country}\nRating: ${d.avg_rating}\nReviews: ${d.total_ratings}`
     })
   ]
 }));
@@ -227,6 +360,8 @@ display(Plot.plot({
 
 A second way in which we can compare cuisines is how long it takes to make a recipe. For this, three variables are available in the dataset. First, there is the preparation time of the recipes. Second, there is the cooking time of the recipes. Finally, there is the total time, the sum of the two previous. We will use the preparation time and the cooking time to compare the cuisines.
 
+**Outlier Analysis:** Similar to popularity, when plotting the time requirements we immediately notice some outliers. **Norwegian** and **Portuguese** cuisines seem to differ significantly in preparation and cooking times. We have highlighted them in the overall comparison and added an extra plot showing all individual recipes for these cuisines.
+
 The figure below shows the average preparation time of a recipe per cuisine relative to the average cooking time of a recipe per cuisine.
 
 ```js
@@ -235,6 +370,7 @@ const cuisineStats2 = Object.values(
     if (!acc[d.country]) {
       acc[d.country] = {
         country: d.country,
+        continent: d.continent || getContinent(d.country),
         sumPrep: 0,
         sumCook: 0,
         count: 0
@@ -251,6 +387,7 @@ const cuisineStats2 = Object.values(
   }, {})
 ).map(d => ({
   country: d.country,
+  continent: d.continent,
   avg_prep_time: d.sumPrep / d.count,
   avg_cook_time: d.sumCook / d.count,
   count: d.count
@@ -259,31 +396,99 @@ const cuisineStats2 = Object.values(
 
 ```js
 display(Plot.plot({
-  title: "Preparation time and cooking time of cuisines",
+  title: "Preparation time and cooking time of cuisines (Averages)",
   width,
-  height: 600,
+  height: 450,
+  color: {
+    legend: true,
+    domain: ["Europe", "North America", "Asia", "South America", "Africa", "Oceania"],
+    range: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff", "#00ffff", "#000000"]
+  },
 
-  x: { label: "Average preparation time in minutes", domain: [0, 90] },
-  y: { label: "Average cooking time in minutes", domain: [0, 90] },
+  x: { label: "Average cooking time in minutes", domain: [0, 90] },
+  y: { label: "Average preparation time in minutes", domain: [0, 90] },
 
   marks: [
     Plot.dot(cuisineStats2, {
-      x: "avg_prep_time",
-      y: "avg_cook_time",
-      r: 4,
-      fill: "#ff0000",
-      stroke: "#ff0000",
+      x: "avg_cook_time",
+      y: "avg_prep_time",
+      r: 6,
+      fill: "continent",
+      stroke: "white",
+      strokeWidth: 0.5,
       tip: true,
       title: d =>
-        `${d.country}\nPreparation time: ${Math.round(d.avg_prep_time)} min\nCooking time: ${Math.round(d.avg_cook_time)} min`
+        `${d.country} (${d.continent})\nCooking time: ${Math.round(d.avg_cook_time)} min\nPreparation time: ${Math.round(d.avg_prep_time)} min`
     }),
-
-    Plot.text(cuisineStats2, {
-      x: "avg_prep_time",
-      y: "avg_cook_time",
+    Plot.text(cuisineStats2.filter(d => d.country === "Norwegian" || d.country === "Portuguese"), {
+      x: "avg_cook_time",
+      y: "avg_prep_time",
       text: "country",
-      dy: -8,
-      fontSize: 10
+      dy: -15,
+      fontWeight: "bold",
+      fill: "black",
+      stroke: "white",
+      strokeWidth: 3
+    })
+  ]
+}));
+```
+
+Below is the distribution of the individual recipes for **Norwegian** and **Portuguese** cuisines. It helps identify if one extremely slow-cooking recipe is heavily impacting the cuisine's average.
+
+```js
+const timeOutliers = cuisines.filter(d => 
+  (d.country === "Norwegian") && 
+  !isNaN(d.prep_time) && !isNaN(d.cook_time)
+);
+
+display(Plot.plot({
+  title: "Individual Recipes: Norwegian",
+  width,
+  height: 450,
+  color: { legend: true },
+  
+  x: { label: "Cooking time in minutes" },
+  y: { label: "Preparation time in minutes" },
+
+  marks: [
+    Plot.dot(timeOutliers, {
+      x: "cook_time",
+      y: "prep_time",
+      r: 4,
+      fill: "country",
+      opacity: 0.7,
+      tip: true,
+      title: d => `${d.name}\n${d.country}\nCooking time: ${d.cook_time} min\nPreparation time: ${d.prep_time} min`
+    })
+  ]
+}));
+```
+
+```js
+const timeOutliers = cuisines.filter(d => 
+  (d.country === "Portuguese") && 
+  !isNaN(d.prep_time) && !isNaN(d.cook_time)
+);
+
+display(Plot.plot({
+  title: "Individual Recipes: Portuguese",
+  width,
+  height: 450,
+  color: { legend: true },
+  
+  x: { label: "Cooking time in minutes" },
+  y: { label: "Preparation time in minutes" },
+
+  marks: [
+    Plot.dot(timeOutliers, {
+      x: "cook_time",
+      y: "prep_time",
+      r: 4,
+      fill: "country",
+      opacity: 0.7,
+      tip: true,
+      title: d => `${d.name}\n${d.country}\nCooking time: ${d.cook_time} min\nPreparation time: ${d.prep_time} min`
     })
   ]
 }));
@@ -362,7 +567,6 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
     y: r * Math.sin(angleOf(i))
   });
 
-  // Grid polygons
   const gridPoints = [];
   for (let lvl = 1; lvl <= levels; lvl++) {
     const r = R * (lvl / levels);
@@ -372,19 +576,16 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
     }
   }
 
-  // Axis lines
   const axisLines = axes.flatMap((ax, i) => [
     { x: 0, y: 0, axis: i },
     { x: toXY(i, R).x, y: toXY(i, R).y, axis: i }
   ]);
 
-  // Axis labels
   const axisLabels = axes.map((ax, i) => {
     const { x, y } = toXY(i, R + 28);
     return { x, y, label: `${ax.label} (${ax.unit})` };
   });
 
-  // Data points & lines
   const dataLines = [];
   const dataDots  = [];
   selectedCuisines.forEach((cuisine, s) => {
@@ -400,7 +601,6 @@ const selectedCuisine2 = view(Inputs.select(secondOptions, { label: "Cuisine 2 (
       dataLines.push({ x, y, cuisine, colorIndex: s });
       dataDots.push({ x, y, cuisine, label: ax.label, value: formatted, colorIndex: s });
     });
-    // Close the polygon
     const ax0 = axes[0];
     const r0 = R * (row[ax0.key] / maxVal[ax0.key]);
     const { x: x0, y: y0 } = toXY(0, r0);
