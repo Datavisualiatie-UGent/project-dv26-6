@@ -13,8 +13,6 @@ const cuisines = await FileAttachment("data/cuisines.csv").csv({ typed: true });
 
 There are many different cuisines around the world. In our dataset we have ${new Set(cuisines.map(d => d.country)).size} available. On this page we will compare these cuisines and get an idea of the ways in which they differ from each other. Before we do this, we first give a brief overview of which recipes belong to which cuisine.
 
-The figure shows a number of recipes with the highest average rating of the chosen cuisine.
-
 ## Explore the distribution of recipe features per cuisine
 
 Select a cuisine and a feature to explore how the values are distributed across recipes.
@@ -50,6 +48,18 @@ const selectedFeature = view(
 ```
 
 ```js
+const sortedRecipes = [...filteredCuisineData]
+  .sort((a, b) => b[selectedFeature] - a[selectedFeature]);
+
+const selectedRecipe = view(
+  Inputs.select(sortedRecipes, {
+    label: "Choose a recipe",
+    format: d => d.name
+  })
+);
+```
+
+```js
 const filteredCuisineData = cuisines.filter(
   d =>
     d.country === selectedCountry &&
@@ -59,78 +69,92 @@ const filteredCuisineData = cuisines.filter(
 ```
 
 ```js
+const statsKeys = [
+  "calories",
+  "fat",
+  "protein",
+  "carbs",
+  "cook_time",
+  "prep_time",
+  "avg_rating",
+  "total_ratings"
+];
+
 display(
-  Plot.plot({
-    title: `${featureMap[selectedFeature]} distribution in ${selectedCountry} cuisine`,
-    width,
-    height: 500,
+  html`
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start;">
 
-    x: {
-      label: featureMap[selectedFeature]
-    },
+      <!-- HISTOGRAM -->
+      <div>
+        ${Plot.plot({
+          title: `${featureMap[selectedFeature]} distribution in ${selectedCountry} cuisine (${filteredCuisineData.length} recipes)`,
+          width: 700,
+          height: 450,
 
-    y: {
-      label: "Number of recipes"
-    },
+          x: { label: featureMap[selectedFeature] },
+          y: { label: "Number of recipes" },
 
-    marks: [
-      Plot.rectY(
-        filteredCuisineData,
-        Plot.binX(
-          { y: "count" },
-          {
-            x: selectedFeature,
-            thresholds: 20,
-            fill: "#ff0000",
-            tip: true
-          }
-        )
-      ),
+          marks: [
+            Plot.rectY(
+              filteredCuisineData,
+              Plot.binX(
+                { y: "count" },
+                {
+                  x: selectedFeature,
+                  thresholds: 20,
+                  fill: "#ff0000",
+                  tip: true
+                }
+              )
+            ),
+            Plot.ruleY([0])
+          ]
+        })}
+      </div>
 
-      Plot.ruleY([0])
-    ]
-  })
+      <!-- RECIPE STATS (FIXED GRID LAYOUT) -->
+      <div>
+        <h3 style="margin-bottom: 10px;">
+          ${selectedRecipe?.name}
+        </h3>
+
+        <div style="
+          display: grid;
+          grid-template-columns: 1fr;
+          font-family: sans-serif;
+          font-size: 14px;
+        ">
+          ${statsKeys.map(
+            (key, i) => html`
+              <div style="
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 10px;
+                padding: 10px 10px;
+                border-bottom: 1px solid #e5e5e5;
+                background: ${i % 2 === 0 ? "#fafafa" : "white"};
+                align-items: center;
+              ">
+
+                <!-- LABEL -->
+                <div style="font-weight: 600; color: #333;">
+                  ${featureMap[key] ?? key}
+                </div>
+
+                <!-- VALUE -->
+                <div style="text-align: right; color: #111;">
+                  ${selectedRecipe?.[key]}
+                </div>
+
+              </div>
+            `
+          )}
+        </div>
+      </div>
+
+    </div>
+  `
 );
-```
-
-## How many recipes do the different cuisines have?
-
-A first way in which cuisines can differ from each other is the number of recipes they offer. A cuisine that offers many recipes has more variety, while a cuisine that offers few recipes may have a few well-known classics.
-
-The figure shows how many recipes there are per cuisine, ranked from most to fewest.
-
-```js
-const recipesPerCuisine = Object.values(
-  cuisines.reduce((acc, d) => {
-    acc[d.country] = acc[d.country] || { country: d.country, count: 0 };
-    acc[d.country].count += 1;
-    return acc;
-  }, {})
-).sort((a, b) => b.count - a.count);
-```
-
-```js
-display(Plot.plot({
-  title: "Number of recipes per cuisine",
-  marginLeft: 180,
-  width,
-  height: recipesPerCuisine.length * 25 + 40,
-  x: { label: "Number of recipes" },
-  y: {
-    label: null,
-    domain: recipesPerCuisine.map(d => d.country)
-  },
-  marks: [
-    Plot.barX(recipesPerCuisine, {
-      x: "count",
-      y: "country",
-      fill: "#ff0000",
-      tip: true,
-      title: d => `${d.country}: ${d.count} recipes`
-    }),
-    Plot.ruleX([0])
-  ]
-}));
 ```
 
 ## How do cuisines differ in popularity?
