@@ -10,18 +10,22 @@ const cuisines = await FileAttachment("data/cuisines.csv").csv({ typed: true });
 
 # What are the differences between cuisines around the world?
 
-There are many different cuisines around the world. In our dataset we have ${new Set(cuisines.map(d => d.country)).size} available. On this page we will compare these cuisines and get an idea of the ways in which they differ from each other. Before we do this, we first give a brief overview of which recipes belong to which cuisine.
+There are many different cuisines around the world.
+In our dataset we have ${new Set(cuisines.map(d => d.country)).size} available.
+On this page we will compare these cuisines and get an idea of the ways in which they differ from each other. 
+Before we do this, we first allow for an exploration of the cuisines and their recipes.
 
-## Explore the distribution of recipe features per cuisine
+## Exploration of the cuisines and their recipes
 
-Select a cuisine and a feature to explore how the values are distributed across recipes.
+Select a cuisine and a characteristic to explore how the values are distributed across recipes, and select a recipe from that cuisine to see all its characteristics.
+The recipes are sorted in a descending order based on the chosen characteristic.
 
 ```js
 const countries = [...new Set(cuisines.map(d => d.country))].sort();
 
 const selectedCountry = view(
   Inputs.select(countries, {
-    label: "Choose a cuisine"
+    label: "Select a cuisine"
   })
 );
 ```
@@ -40,7 +44,7 @@ const featureMap = {
 
 const selectedFeature = view(
   Inputs.select(Object.keys(featureMap), {
-    label: "Choose a feature",
+    label: "Select a characteristic",
     format: d => featureMap[d]
   })
 );
@@ -52,7 +56,7 @@ const sortedRecipes = [...filteredCuisineData]
 
 const selectedRecipe = view(
   Inputs.select(sortedRecipes, {
-    label: "Choose a recipe",
+    label: "Select a recipe",
     format: d => d.name
   })
 );
@@ -154,9 +158,11 @@ display(
 
 ## How do cuisines differ in popularity?
 
-A first aspect in which cuisines can differ is popularity. Popularity can be measured in two ways with our dataset. First, we can look at the average rating of the recipes of a cuisine. Second, we can look at the number of ratings that the recipes of a cuisine have received. We will display these two ways of measuring popularity in the same figure.
-
-**Outlier Analysis:** As you will notice in the plot below, most cuisines cluster together, but there are a few notable outliers. Specifically, **Greek** and **Southern Recipes** stand out strongly in terms of popularity metrics. We have labeled them in the main plot and added a secondary plot displaying the individual recipes from these two cuisines to investigate what drives these outlier values.
+A first aspect in which cuisines can differ is popularity.
+Popularity can be measured in two ways with our dataset.
+First, we can look at the average rating of the recipes of a cuisine.
+Second, we can look at the number of ratings that the recipes of a cuisine have received.
+We will display these two ways of measuring popularity in the same figure.
 
 The figure below shows the average number of ratings of a recipe per cuisine relative to the average average rating of a recipe per cuisine.
 
@@ -296,7 +302,13 @@ display(Plot.plot({
 }));
 ```
 
-Below you can explore the individual recipes for the **Greek** and **Southern Recipes** cuisines. This shows the variance and lets us see if a few viral recipes are skewing the average, or if the cuisine as a whole is structurally more popular.
+We notice that on average, the North-American cuisines are the most popular (towards the top-right of the plot), while the South-American cuisines are less popular on average (towards the bottom-left of the plot).
+
+As you also will have noticed in the plot, there are a few extremes worth noting.
+Specifically, Greek and Southern Recipes stand out strongly in terms of popularity metrics.
+We have labeled them in the main plot and added secondary plots displaying the distribution of characteristic in which they are extreme.
+
+We first show the total ratings distribution of the Greek cuisine.
 
 ```js
 const greekRatingsData = cuisines.filter(d => d.country === "Greek" && d.total_ratings != null && !isNaN(d.total_ratings));
@@ -327,6 +339,11 @@ display(
 );
 ```
 
+We can see that there are quite a few recipes that received a lot of ratings.
+These recipes are the reason that the Greek cuisine had an extreme value for this characteristic.
+
+Secondly, we show the average ratings distribution of the Southern Recipes cuisine.
+
 ```js
 const southernRatingsData = cuisines.filter(d => d.country === "Southern Recipes" && d.avg_rating != null && !isNaN(d.avg_rating));
 
@@ -356,11 +373,17 @@ display(
 );
 ```
 
+We can see that there are very few recipes that received a low average rating.
+Therefore, the average of the average ratings is an extreme value in the plot.
+
 ## How do cuisines differ in the time it takes to make the recipes?
 
-A second way in which we can compare cuisines is how long it takes to make a recipe. For this, three variables are available in the dataset. First, there is the preparation time of the recipes. Second, there is the cooking time of the recipes. Finally, there is the total time, the sum of the two previous. We will use the preparation time and the cooking time to compare the cuisines.
-
-**Outlier Analysis:** Similar to popularity, when plotting the time requirements we immediately notice some outliers. **Norwegian** and **Portuguese** cuisines seem to differ significantly in preparation and cooking times. We have highlighted them in the overall comparison and added an extra plot showing all individual recipes for these cuisines.
+A second way in which we can compare cuisines is how long it takes to make a recipe.
+For this, three variables are available in the dataset.
+First, there is the preparation time of the recipes.
+Second, there is the cooking time of the recipes.
+Finally, there is the total time, the sum of the two previous.
+We will use the preparation time and the cooking time to compare the cuisines.
 
 The figure below shows the average preparation time of a recipe per cuisine relative to the average cooking time of a recipe per cuisine.
 
@@ -434,7 +457,13 @@ display(Plot.plot({
 }));
 ```
 
-Below is the distribution of the individual recipes for **Norwegian** and **Portuguese** cuisines. It helps identify if one extremely slow-cooking recipe is heavily impacting the cuisine's average.
+We notice that on average, the European cuisines take the most time (towards the top-right of the plot), while the South-American cuisines take less time on average (towards the bottom-left of the plot).
+
+We can again notice that there are a few extremes worth noting.
+Specifically, Norwegian and Portuguese stand out in terms of the preparation time.
+We have labeled them in the main plot and added secondary plots displaying the distribution of the preparation time.
+
+We first show the preparation time distribution of the Norwegian cuisine, and then of the Portuguese cuisine.
 
 ```js
 const norwegianPrepData = cuisines.filter(d => d.country === "Norwegian" && d.prep_time != null && !isNaN(d.prep_time));
@@ -494,11 +523,16 @@ display(
 );
 ```
 
+For both cuisines, we can conclude that there are one or two recipes with a very extreme preparation time that make the total average over all the recipes extreme.
+
 ## How do cuisines differ in the nutritional values of their recipes?
 
-The last way in which we can compare cuisines is the nutritional values of their recipes. For this we have for all recipes the number of kilocalories, fats, carbohydrates and proteins available. We will use all of these, whereby the user has the choice of which cuisines are displayed.
+The last way in which we can compare cuisines is the nutritional values of their recipes. For this we have for all recipes the number of kilocalories, fats, carbohydrates and proteins available.
+We will use all of these, whereby the user has the choice of which cuisines are displayed.
 
-The radar chart below shows for each chosen cuisine the average values of the four nutrients. Each axis represents one nutrient, normalised relative to the maximum across all cuisines. Hover over a point to see the exact value.
+The radar chart below shows for each chosen cuisine the average values of the four nutrients.
+Each axis represents one nutrient, normalised relative to the maximum across all cuisines.
+Hover over a point to see the exact value of the nutrient.
 
 ```js
 const cuisineStats3 = Object.values(
