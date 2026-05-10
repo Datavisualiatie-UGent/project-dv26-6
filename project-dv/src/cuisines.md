@@ -104,7 +104,7 @@ display(
                 {
                   x: selectedFeature,
                   thresholds: 20,
-                  fill: "#ff0000",
+                  fill: "#2A9A8A",
                   tip: true
                 }
               )
@@ -270,7 +270,7 @@ display(Plot.plot({
   color: {
     legend: true,
     domain: ["Europe", "North America", "Asia", "South America", "Africa", "Oceania"],
-    range: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff", "#00ffff", "#000000"] 
+    range: ["#A8C030", "#C43A2A", "#D4A820", "#4A7A9A", "#C4717A", "#6A4A9A"]
   },
 
   x: { label: "Average number of ratings", domain: [0, 200] },
@@ -328,7 +328,7 @@ display(
           {
             x: "total_ratings",
             thresholds: 20,
-            fill: "#ff0000",
+            fill: "#8A9A2A",
             tip: true
           }
         )
@@ -362,7 +362,7 @@ display(
           {
             x: "avg_rating",
             thresholds: 20,
-            fill: "#ff0000",
+            fill: "#D4A820",
             tip: true
           }
         )
@@ -425,7 +425,7 @@ display(Plot.plot({
   color: {
     legend: true,
     domain: ["Europe", "North America", "Asia", "South America", "Africa", "Oceania"],
-    range: ["#ff0000", "#00ff00", "#0000ff", "#ff00ff", "#00ffff", "#000000"]
+    range: ["#A8C030", "#C43A2A", "#D4A820", "#4A7A9A", "#C4717A", "#6A4A9A"]
   },
 
   x: { label: "Average cooking time in minutes", domain: [0, 90] },
@@ -483,7 +483,7 @@ display(
           {
             x: "prep_time",
             thresholds: 20,
-            fill: "#ff0000",
+            fill: "#C43A2A",
             tip: true
           }
         )
@@ -512,7 +512,7 @@ display(
           {
             x: "prep_time",
             thresholds: 20,
-            fill: "#ff0000",
+            fill: "#D4722A",
             tip: true
           }
         )
