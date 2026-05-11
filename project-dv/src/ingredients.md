@@ -14,13 +14,13 @@ const allRecipes      = await FileAttachment("data/all_recipes.csv").csv({ typed
 
 # What's in our food?
 
-The AllRecipes dataset contains **${ingredients.length.toLocaleString("en")} unique ingredients** spread across more than 14,000 recipes. From everyday staples like salt and flour to the most exotic flavourings — this page explores which ingredients dominate our kitchens, what they reveal about recipe quality and nutrition, and how cuisines around the world differ from one another.
+The AllRecipes dataset contains **${ingredients.length.toLocaleString("en")} unique ingredients** spread across more than 14,000 recipes. From everyday staples like salt and flour to the most exotic flavourings: this page explores which ingredients dominate our kitchens, what they reveal about recipe quality and nutrition, and how cuisines around the world differ from one another.
 
 ---
 
 ## The most common ingredients
 
-Every cuisine has its building blocks. Salt leads by a wide margin, appearing in over a third of all recipes. Sugar, flour and butter follow — the cornerstones of Western home cooking. Use the slider to expand or narrow the list.
+Every cuisine has its building blocks. Salt leads by a wide margin, appearing in over a third of all recipes. Sugar, flour and butter follow: the cornerstones of Western home cooking. Use the slider to expand or narrow the list.
 
 <style>
 select {
@@ -101,7 +101,7 @@ display(Plot.plot({
 
 Not all ingredients are equal when it comes to user ratings. The chart below takes the **30 most popular ingredients** and shows how the average rating of recipes containing that ingredient compares to the overall dataset average. Ingredients associated with above-average recipes are shown in green; those linked to below-average recipes in red.
 
-Note that this is a correlation, not causation — a recipe rated highly because of its technique might simply happen to contain garlic.
+Note that this is a correlation, not causation, a recipe rated highly because of its technique might simply happen to contain garlic.
 
 <span style="color: #2ecc71">■</span> **Green** = above average rating &nbsp;&nbsp; <span style="color: #e74c3c">■</span> **Red** = below average rating
 
@@ -145,7 +145,7 @@ display(Plot.plot({
 
 A recurring question in food culture: do richer, more caloric recipes actually get better reviews? The chart below compares the calorie distribution of **highly-rated recipes** (≥ 4.5 ★) against **lower-rated recipes** (< 4.5 ★). Each curve is normalised so that both groups are directly comparable regardless of size. The dashed vertical lines mark the mean calorie count for each group.
 
-Only recipes with at least **${minRatings} ratings** are included to ensure reliable scores — adjust the threshold with the slider.
+Only recipes with at least **${minRatings} ratings** are included to ensure reliable scores, adjust the threshold with the slider.
 
 ```js
 const minRatings = view(Inputs.range([5, 50], { step: 5, value: 10, label: "Minimum number of ratings" }));
@@ -210,7 +210,7 @@ display(Plot.plot({
 
 ## The world on your plate
 
-Different cuisines have signature ingredients that define their identity. Rather than simply listing the most frequently used ingredients per country, we compute a **specificity score** — how much more often an ingredient appears in a given cuisine compared to its global frequency in the full dataset. A high score means the ingredient is a true hallmark of that cuisine.
+Different cuisines have signature ingredients that define their identity. Rather than simply listing the most frequently used ingredients per country, we compute a **specificity score**; how much more often an ingredient appears in a given cuisine compared to its global frequency in the full dataset. A high score means the ingredient is a true hallmark of that cuisine.
 
 Select a cuisine from the dropdown to explore its most distinctive ingredients.
 

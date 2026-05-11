@@ -2,7 +2,12 @@
 title: Recipes Visualisation
 ---
 
-<div id="book-container" style="display: flex; justify-content: center; align-items: center; padding: 80px 0; position: relative;">
+<div style="text-align: center; font-size: 2.5em; font-weight: bold;">
+AllRecipes visualized
+</div>
+
+
+<div id="book-container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 80px 0; position: relative;">
   <span id="book" style="font-size: 72px; position: relative; z-index: 10;">📖</span>
   <span class="ingredient" id="i0">🧅</span>
   <span class="ingredient" id="i1">🌶️</span>
@@ -14,7 +19,6 @@ title: Recipes Visualisation
   <span class="ingredient" id="i7">🌿</span>
   <span class="ingredient" id="i8">🫙</span>
 </div>
-<p id="hint" style="text-align: center; font-size: 13px; color: gray;">↓ scroll to reveal</p>
 
 <style>
   .ingredient {
@@ -32,7 +36,6 @@ title: Recipes Visualisation
 
 ```js
 const book = document.getElementById("book");
-const hint = document.getElementById("hint");
 
 const items = [
   { id: "i0", angle: -140, dist: 130 },
@@ -49,7 +52,6 @@ const items = [
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      hint.style.opacity = 0;
       book.style.transform = "scale(1.18)";
       items.forEach((item, idx) => {
         setTimeout(() => {
@@ -59,7 +61,6 @@ const observer = new IntersectionObserver((entries) => {
         }, idx * 60);
       });
     } else {
-      hint.style.opacity = 1;
       book.style.transform = "scale(1)";
       items.forEach(item => {
         item.el.style.transform = "translate(0,0) scale(0.2)";
@@ -75,8 +76,8 @@ invalidation.then(() => observer.disconnect());
 
 <div style="max-width: 600px; margin: 0 auto; text-align: center;">
 <p>
-In this visualisation we will be looking at a large dataset of recipes released by the popular website "AllRecipes.com".
-The saying "You are what you eat" says it all: you can find out a lot about somebody through their eating habits, or more specifically, their cooking habits. This website gives the viewer the chance to look at how people cook throughout different cultures: what ingrediënts do they use, which nutrients are prominent, how much time do we spend in the kitchen and much more!
+In this visualisation we will be looking at a dataset of 2,218 recipes released by the popular website "AllRecipes.com".
+The saying "You are what you eat" says it all: you can find out a lot about somebody through their eating habits, or more specifically, their cooking habits. This webpage gives the viewer the chance to look at how people cook throughout different cultures: what ingrediënts do they use, which nutrients are prominent, how much time do we spend in the kitchen and much more!
 </p>
 <hr>
 <p>
