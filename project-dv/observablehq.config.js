@@ -28,6 +28,9 @@ export default {
   // The path to the source root.
   root: "src",
 
+  // Base path for GitHub Pages (must match your repo name)
+  base: "/project-dv26-6",
+
   theme: "air",
 
   sidebar: false,
