@@ -78,8 +78,10 @@ display(Plot.plot({
   marginLeft: 180,
   width,
   height: n * 22 + 60,
-  x: { label: "Number of recipes" },
-  y: { label: null },
+  x: { label: "Number of recipes",
+       grid: true },
+  y: { label: null,
+       grid: true },
   marks: [
     Plot.barX(ingredients.slice(0, n), {
       x: "count",
@@ -115,9 +117,11 @@ display(Plot.plot({
   height: top30.length * 22 + 60,
   x: {
     label: "Deviation from average rating",
-    tickFormat: d => (d > 0 ? "+" : "") + d.toFixed(2)
+    tickFormat: d => (d > 0 ? "+" : "") + d.toFixed(2),
+       grid: true
   },
-  y: { label: null, domain: top30.map(d => d.ingredient) },
+  y: { label: null, domain: top30.map(d => d.ingredient),
+       grid: true },
   marks: [
     Plot.barX(top30, {
       x: "rating_deviation",
@@ -157,8 +161,8 @@ const histData = allRecipes.filter(d =>
 
 const binGen = d3.bin().domain([0, 1500]).thresholds(40);
 const groups = [
-  { label: "Highly rated (≥ 4.5 ★)", filter: d => d.avg_rating >= 4.5 },
-  { label: "Lower rated (< 4.5 ★)",  filter: d => d.avg_rating < 4.5  }
+  { label: "Highly rated (≥ 4.5 ★)", filter: d => d.avg_rating >= 4.5},
+  { label: "Lower rated (< 4.5 ★)",  filter: d => d.avg_rating < 4.5}
 ];
 
 const lineData = groups.flatMap(({ label, filter }) => {
@@ -179,8 +183,10 @@ display(Plot.plot({
   width,
   height: 400,
   marginRight: 20,
-  x: { label: "Calories (kcal)" },
-  y: { label: "Relative frequency" },
+  x: { label: "Calories (kcal)",
+       grid: true },
+  y: { label: "Relative frequency",
+       grid: true },
   color: { legend: true },
   marks: [
     Plot.lineY(lineData, {
@@ -224,8 +230,10 @@ display(Plot.plot({
   marginLeft: 210,
   width,
   height: countryData.length * 30 + 60,
-  x: { label: "Specificity score (how unique compared to other cuisines)" },
-  y: { label: null },
+  x: { label: "Specificity score (how unique compared to other cuisines)",
+       grid: true },
+  y: { label: null,
+       grid: true },
   marks: [
     Plot.barX(countryData, {
       x: "specificity",
@@ -367,8 +375,10 @@ if (ingredientSelector.length === 0) {
     marginBottom: ingredientSelector.length > 3 ? 80 : 50,
     width,
     height: 350,
-    x: { label: null, tickRotate: ingredientSelector.length > 4 ? -30 : 0 },
-    y: { label: metric.label, zero: true },
+    x: { label: null, tickRotate: ingredientSelector.length > 4 ? -30 : 0,
+       grid: true },
+    y: { label: metric.label, zero: true,
+       grid: true },
     color: { legend: ingredientSelector.length > 1 },
     marks: [
       Plot.barY(ingredientSelector, {

@@ -156,8 +156,10 @@ display(
           width: 700,
           height: 450,
 
-          x: { label: featureMap[selectedFeature] },
-          y: { label: "Number of recipes" },
+          x: { label: featureMap[selectedFeature],
+               grid: true },
+          y: { label: "Number of recipes",
+               grid: true  },
 
           marks: [
             Plot.rectY(
@@ -336,8 +338,10 @@ display(Plot.plot({
     range: ["#A8C030", "#C43A2A", "#D4A820", "#4A7A9A", "#C4717A", "#6A4A9A"]
   },
 
-  x: { label: "Average number of ratings", domain: [0, 200] },
-  y: { label: "Average average rating", domain: [4, 5] },
+  x: { label: "Average number of ratings", domain: [0, 200],
+       grid: true  },
+  y: { label: "Average average rating", domain: [4, 5],
+       grid: true },
 
   marks: [
     Plot.dot(cuisineStats, {
@@ -381,8 +385,10 @@ display(
     title: `Total Ratings distribution in Greek cuisine`,
     width: 700,
     height: 450,
-    x: { label: "Total Ratings" },
-    y: { label: "Number of recipes" },
+    x: { label: "Total Ratings",
+       grid: true },
+    y: { label: "Number of recipes",
+       grid: true },
     marks: [
       Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
       Plot.rectY(greekRatingsData, Plot.binX({ y: "count" }, { x: "total_ratings", thresholds: 20, fill: "#8A9A2A", tip: true })),
@@ -405,8 +411,10 @@ display(
     title: `Average Rating distribution in Southern Recipes cuisine`,
     width: 700,
     height: 450,
-    x: { label: "Average Rating" },
-    y: { label: "Number of recipes" },
+    x: { label: "Average Rating",
+       grid: true },
+    y: { label: "Number of recipes",
+       grid: true },
     marks: [
       Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
       Plot.rectY(
@@ -482,8 +490,10 @@ display(Plot.plot({
     range: ["#A8C030", "#C43A2A", "#D4A820", "#4A7A9A", "#C4717A", "#6A4A9A"]
   },
 
-  x: { label: "Average cooking time in minutes", domain: [0, 90] },
-  y: { label: "Average preparation time in minutes", domain: [0, 90] },
+  x: { label: "Average cooking time in minutes", domain: [0, 90],
+       grid: true },
+  y: { label: "Average preparation time in minutes", domain: [0, 90],
+       grid: true },
 
   marks: [
     Plot.dot(cuisineStats2, {
@@ -529,8 +539,10 @@ We first show the preparation time distribution of the Norwegian cuisine, and th
       ${Plot.plot({
         title: "Preparation Time distribution in Norwegian cuisine",
         width: 350, height: 350,
-        x: { label: "Preparation Time" },
-        y: { label: "Number of recipes" },
+        x: { label: "Preparation Time",
+       grid: true },
+        y: { label: "Number of recipes",
+       grid: true },
         marks: [
           Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
           Plot.rectY(norwegianPrepData, Plot.binX({ y: "count" }, { x: "prep_time", thresholds: 20, fill: "#C43A2A", tip: true })),
@@ -540,8 +552,10 @@ We first show the preparation time distribution of the Norwegian cuisine, and th
       ${Plot.plot({
         title: "Preparation Time distribution in Portuguese cuisine",
         width: 350, height: 350,
-        x: { label: "Preparation Time" },
-        y: { label: "Number of recipes" },
+        x: { label: "Preparation Time" ,
+       grid: true},
+        y: { label: "Number of recipes",
+       grid: true },
         marks: [
           Plot.gridY({ stroke: "#6e6e6e", strokeWidth: 1.5 }),
           Plot.rectY(portuguesePrepData, Plot.binX({ y: "count" }, { x: "prep_time", thresholds: 20, fill: "#D4722A", tip: true })),
