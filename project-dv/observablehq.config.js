@@ -46,10 +46,10 @@ export default {
   ">
     <strong style="font-size: 1.1rem; margin-left: 2rem; margin-bottom: 0.3rem;">🍽️ Recipes</strong>
     <div style="display: flex; gap: 0.5rem;">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/exploration" class="nav-link">Explore</a>
-      <a href="/cuisines" class="nav-link">Cuisines</a>
-      <a href="/ingredients" class="nav-link">Ingredients</a>
+      <a href="/project-dv26-6/" class="nav-link">Home</a>
+      <a href="/project-dv26-6/exploration" class="nav-link">Explore</a>
+      <a href="/project-dv26-6/cuisines" class="nav-link">Cuisines</a>
+      <a href="/project-dv26-6/ingredients" class="nav-link">Ingredients</a>
     </div>
   </nav>
   <style>
@@ -68,8 +68,8 @@ export default {
     function setActiveLink() {
       document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
-        const linkPath = link.pathname.replace(/\\/+$/, '') || '/';
-        const currentPath = window.location.pathname.replace(/\\/+$/, '') || '/';
+        const linkPath = link.pathname.replace(/\/+$/, '');
+        const currentPath = window.location.pathname.replace(/\/+$/, '');
         if (linkPath === currentPath) link.classList.add('active');
       });
     }
